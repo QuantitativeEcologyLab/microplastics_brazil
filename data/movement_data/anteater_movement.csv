@@ -1,0 +1,4 @@
+"V1","identity","V3","V4","V5","V6","V7","V8","V9","V10","V11","V12","V13","V14","V15","V16","V17","V18","V19","V20","V21","V22","V23","V24","V25"
+"Myrmecophaga_tridactyla","Alvinho_Alvaro",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+"binomial","ID","Year","Lat","Long","Frequency","Duration","n","n_area","tau_p","tau_p_min","tau_p_max","tau_p_var","tau_v","tau_v_min","tau_v_max","tau_v_var","sigma","l_v","diffusion","diffusion_min","diffusion_max","hr","hr_min","hr_max"
+"Myrmecophaga_tridactyla","Alvinho_Alvaro",2023,-20.86049,-52.0264605,80.0166666666667,254.944409722222,3730,135.276486613771,129087.583968867,99503.8845372899,167466.872398077,258665683.16375,6903.63582210594,3517.2654161957,13550.3528806234,4118024.62726989,117535.979945454,79.2833727237099,1.58981573495379,1.38530494834734,1.80820115476967,1659296.18136529,1391473.5687635,1950341.89468025
