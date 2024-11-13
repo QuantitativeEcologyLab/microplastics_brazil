@@ -57,8 +57,15 @@ for(j in 1:length(DATA)){
   cat("Working on individual ", j, " of ", length(DATA), "\n")
   
   #Extract the current individual
-  
   if(class(DATA) == "list") {cilla <- DATA[[j]]} else {cilla <- DATA}
+  
+  #Filter out any locations with very small time intervals
+  DT <- c(Inf, diff(cilla$t))
+  cilla <- cilla[DT > 5 %#% "min",]
+  message("Dropped ", sum(DT < 5 %#% "min")," location(s) with short time intervals \n")
+  
+  #Plot the filtered location data for the current individual
+  plot(cilla)
   
   RESULTS <- tryCatch(
     {
@@ -108,11 +115,16 @@ for(j in 1:length(DATA)){
 # Extract land use
 #-------------------------------------------------------------
 
-
-# Import the human footprint index raster
-# Note: these rasters are not on GitHub
-HFI <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/HFI.tif")
+#Import the land classification data for Brazil
+#Data are from here: https://brasil.mapbiomas.org/en/
 land_types <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/brasil_coverage_2022.tif")
+
+# Import the human footprint index raster from: https://www.frontiersin.org/articles/10.3389/frsen.2023.1130896/full
+#Data are available here: https://source.coop/repositories/vizzuality/hfp-100/description
+#HFI <- rast("~/Documents/Projects/microplastics_brazil/data/environmental_data/HFI.tif")
+HFI <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/hfp_2021_100m_v1-2_cog.tif")
+
+# Note: these rasters are not on GitHub
 
 
 RES <- list()
@@ -135,12 +147,16 @@ for(i in 1:length(DATA)){
   
   #Data carpentry to get the home range PDF into the correct format for extracting values
   HR <- rast(raster(AKDE, DF = "PMF"))
-  HR <- project(HR, crs(land_types))
+  HR2 <- project(HR, crs(HFI), res = res(HFI))
+  HR.df2 <- terra::as.data.frame(HR2, xy = TRUE, na.rm = TRUE)
+  HR.df2$layer <- HR.df2$layer/sum(HR.df2$layer)   #Renormalize
+  HR <- project(HR, crs(land_types), res = res(land_types))
   HR.df <- terra::as.data.frame(HR, xy = TRUE, na.rm = TRUE)
+  HR.df$layer <- HR.df$layer/sum(HR.df$layer)  #Renormalize
   
   
   #Extract habitat values
-  HR.df$HFI <- extract(HFI, HR.df[,1:2])[,2]
+  HR.df2$HFI <- extract(HFI, HR.df2[,1:2])[,2]/1000
   HR.df$land_class <- extract(land_types, HR.df[,1:2])[,2]
   HR.df$land_class[HR.df$land_class %in% c("1","3", "4","5","6","49","29")] <- "Native_forest"
   #HR.df$land_class[HR.df$land_class %in% c("11")] <- "Wetland"
@@ -160,8 +176,8 @@ for(i in 1:length(DATA)){
   
   res <- data.frame(binomial = "Myrmecophaga_tridactyla")
   res$ID <- AKDE@info$identity
-  res$mean_HFI <- sum(HR.df$layer*HR.df$HFI)
-  res$max_HFI <- max(HR.df$HFI)
+  res$mean_HFI <- sum(HR.df2$layer*HR.df2$HFI)
+  res$max_HFI <- max(HR.df2$HFI)
   res <- cbind(res,PROPS)
   
   RES[[i]] <- res

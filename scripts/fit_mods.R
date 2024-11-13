@@ -97,7 +97,7 @@ CTMM_FIT <- function(cilla,
   
   AKDE <- akde(cilla,
                FIT,
-               weights=TRUE)
+               weights=FALSE)
   
 
   #And save

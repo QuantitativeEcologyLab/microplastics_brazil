@@ -19,22 +19,26 @@ mp_data[which(mp_data$name == "Alvinho/Alvaro"),"name"] <- "Alvinho_Alvaro"
 
 #Import the estimated movement metrics for the 3 species
 tapir_data <- read.csv("data/movement_data/tapir_movement.csv")
-anteater_data <- read.csv("data/movement_data/anteater_movement.csv", skip = 2)
+anteater_data <- read.csv("data/movement_data/anteater_movement.csv")
 armadillo_data <- read.csv("data/movement_data/armadillo_movement.csv")
-move_data <- dplyr::bind_rows(tapir_data, armadillo_data)
+move_data <- dplyr::bind_rows(tapir_data, anteater_data, armadillo_data)
 
-#Import the estimated land usefor the 3 species
+#Import the estimated land use for the 3 species
 tapir_data <- read.csv("data/movement_data/tapir_land_use.csv")
-#anteater_data <- read.csv("data/movement_data/anteater_land_use.csv")
+anteater_data <- read.csv("data/movement_data/anteater_land_use.csv")
 armadillo_data <- read.csv("data/movement_data/armadillo_land_use.csv")
-land_use <- dplyr::bind_rows(tapir_data, armadillo_data)
+land_use <- dplyr::bind_rows(tapir_data, anteater_data, armadillo_data)
 land_use[is.na(land_use)] <- 0
 
 #Merge with the microplastics information
 mp_data <- merge(x = mp_data, y = move_data, by.x = c("name", "species"), by.y = c("ID", "binomial"), all.x = TRUE)
 mp_data <- merge(x = mp_data, y = land_use, by.x = c("name", "species"), by.y = c("ID", "binomial"), all.x = TRUE)
 
+#Drop any individuals without movement data
+mp_data <- mp_data[!is.na(mp_data$hr),]
 
+#Convert hr to km^2
+mp_data$hr <- mp_data$hr*1e-6
 
 #-------------------------------------------------------------
 # Correlation with home-range size
@@ -51,15 +55,21 @@ summary(fit)
 
 
 a <- 
-  ggplot(data = mp_data, aes(x = hr*1e-6, y = mp_ml)) +
+  ggplot(data = mp_data[mp_data$name != "Juliana",], aes(x = hr, y = mp_ml)) +
   ggtitle("A)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
+  geom_smooth(method = "gam",
+              formula = y ~ x,
+              method.args = list(family = tw(link = "log")),
+              col = "black",
+              fill = "grey80",
+              linewidth = 0.2,
+              linetype = "dashed") +
+  geom_point(aes(col = species), size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"),
                       name = "",
                       labels = c("Myrmecophaga tridactyla", "Priodontes maximus", "Tapirus terrestris")) +
   ylab("MP concentration (particles/mL)") +
-  xlab(expression(bold(Home-range~size~(km^2))))+
+  xlab(expression(bold(Home~range~size~(km^2))))+
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -71,14 +81,16 @@ a <-
         legend.text  = element_text(size=5, family = "sans", face = "bold"),
         axis.ticks.length=unit(0.08, "cm"),
         axis.ticks = element_line(size = 0.3),
-        legend.position = c(0.7,0.95),
+        legend.position = "inside",
+        legend.position.inside  = c(0.7,0.95),
         legend.key.size = unit(0.2, "cm"),
         legend.key.width = unit(0.2, "cm"),
         legend.key = element_rect(fill = "transparent", colour = "transparent"),
         legend.background = element_rect(fill = "transparent"),
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) 
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
@@ -100,7 +112,13 @@ summary(fit)
 b <- 
   ggplot(data = mp_data, aes(x = diffusion, y = mp_ml)) +
   ggtitle("B)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
+  geom_smooth(method = "gam",
+              formula = y ~ x,
+              method.args = list(family = tw(link = "log")),
+              col = "black",
+              fill = "grey80",
+              size = 0.2,
+              linetype = "dashed") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
   ylab("MP concentration (particles/mL)") +
@@ -123,13 +141,14 @@ b <-
         legend.background = element_rect(fill = "transparent"),
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) 
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
 
 #-------------------------------------------------------------
-# Correlation with human footprint index
+# Correlation with mean human footprint index
 #-------------------------------------------------------------
 
 #Test for a correlation between mean HFI and blood MP concentration
@@ -144,11 +163,17 @@ summary(fit)
 c <- 
   ggplot(data = mp_data, aes(x = mean_HFI, y = mp_ml)) +
   ggtitle("C)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
+  geom_smooth(method = "gam",
+              formula = y ~ x,
+              method.args = list(family = tw(link = "log")),
+              col = "black",
+              fill = "grey80",
+              size = 0.2,
+              linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
   ylab("MP concentration (particles/mL)") +
-  xlab("Mean Human Footprint Index") +
+  xlab("Mean human footprint index in home range") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -162,8 +187,46 @@ c <-
         legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"))
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
+
+#-------------------------------------------------------------
+# Correlation with max human footprint index
+#-------------------------------------------------------------
+
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ max_HFI + s(species, bs = "re") + s(max_HFI, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data,
+           method = "REML")
+
+summary(fit)
+
+
+d <- 
+  ggplot(data = mp_data, aes(x = max_HFI, y = mp_ml)) +
+  ggtitle("D)") +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("MP concentration (particles/mL)") +
+  xlab("Maximum human footprint index in home range") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
@@ -180,9 +243,9 @@ fit <- gam(mp_ml ~ Agriculture + s(species, bs = "re") + s(Agriculture, species,
 
 summary(fit)
 
-d <- 
+e <- 
   ggplot(data = mp_data, aes(x = Agriculture, y = mp_ml)) +
-  ggtitle("D)") +
+  ggtitle("E)") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
@@ -201,7 +264,8 @@ d <-
         legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"))
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
@@ -220,14 +284,14 @@ fit <- gam(mp_ml ~ Water + s(species, bs = "re") + s(Water, species, bs = "re"),
 summary(fit)
 
 
-e <- 
+f <- 
 ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
-  ggtitle("E)") +
+  ggtitle("F)") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
   ylab("MP concentration (particles/mL)") +
-  xlab("Proportion of home range in water and wetlands") +
+  xlab("Proportion of water and wetlands in home range") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -241,7 +305,8 @@ ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
         legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"))
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
@@ -259,14 +324,14 @@ fit <- gam(mp_ml ~ Native_forest + s(species, bs = "re") + s(Native_forest, spec
 summary(fit)
 
 
-f <- 
+g <- 
   ggplot(data = mp_data, aes(x = Native_forest, y = mp_ml)) +
-  ggtitle("F)") +
+  ggtitle("G)") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
   ylab("MP concentration (particles/mL)") +
-  xlab("Proportion of home range in natural forest") +
+  xlab("Proportion of natural forest in home range") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -280,7 +345,8 @@ f <-
         legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"))
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 FIG <-
