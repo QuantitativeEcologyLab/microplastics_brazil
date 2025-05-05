@@ -23,7 +23,7 @@ source("scripts/fit_mods.R") # simplifies analysing gps data for multiple indivi
 # Fit movement models and save information 
 #-------------------------------------------------------------
 
-# Import the tapir gps data and convert to a telemetry object
+# Import the armadillo gps data and convert to a telemetry object
 # Note: these data are not on GitHub
 DATA <- read.csv("data/gps_data/armadillo_gps_data.csv")
 DATA <- as.telemetry(DATA, mark.rm = TRUE)

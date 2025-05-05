@@ -1,0 +1,512 @@
+land_use_fig_path <- paste("~/Dropbox/UBC/Projects/microplastics_brazil/figures/tracking_data_land_use/",
+species,
+"/",
+cilla@info$identity,
+".png",
+sep = "")
+#Save the figures
+ggsave(hfi_figure,
+width = 2.375, height = 2.5, units = "in",
+dpi = 600,
+bg = "transparent",
+file=hfi_fig_path)
+ggsave(land_use_figure,
+width = 2.375, height = 2.5, units = "in",
+dpi = 600,
+bg = "transparent",
+file=land_use_fig_path)
+} # closes the loop over the tracked individuals
+} #closes the loop over the gps data file paths
+?p.adjust
+#Load in any necessary packages
+library(mgcv)
+#Import the MP datasets
+source("scripts/data_import.R")
+#Drop any individuals without movement data
+mp_data <- mp_data[!is.na(mp_data$hr),]
+#Test for a correlation between home range size and blood MP concentration
+fit <- gam(mp_ml ~ hr + s(species, bs = "re") + s(hr, species, bs = "re"),
+family = tw(link = "log"),
+data = mp_data,
+method = "REML")
+summary(fit)
+#Test for a correlation between home range size and blood MP concentration
+fit <- gam(mp_ml ~ diffusion + s(species, bs = "re") + s(diffusion, species, bs = "re"),
+family = tw(link = "log"),
+data = mp_data,
+method = "REML")
+summary(fit)
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ mean_HFI + s(species, bs = "re") + s(mean_HFI, species, bs = "re"),
+family = tw(link = "log"),
+data = mp_data,
+method = "REML")
+summary(fit)
+?predict
+?predict.gam
+predict(fit, newdata = (data.frame(mean_HFI = 0, species = "null")), type = "response", exclude = "s(species)")
+predict(fit, newdata = (data.frame(mean_HFI = 0, species = "null")), type = "link", exclude = "s(species)",se.fit = TRUE)
+#Predict MP concentrations at HFI = 0
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = 0, species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+exp(PREDS$fit)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+summary(fit)
+exp(2.91850)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+# and the animals' patterns of movement and habitat use.
+# Written by Michael Noonan
+#Load in any necessary packages
+library(mgcv)
+#Import the MP datasets
+source("scripts/data_import.R")
+#Drop any individuals without movement data
+mp_data <- mp_data[!is.na(mp_data$hr),]
+#Predict MP concentrations at HFI = 50
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = 50, species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ mean_HFI + s(species, bs = "re") + s(mean_HFI, species, bs = "re"),
+family = tw(link = "log"),
+data = mp_data,
+method = "REML")
+summary(fit)
+#Predict MP concentrations at HFI = 0
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = 0, species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+#Predict MP concentrations at HFI = 50
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = 50, species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+618.4712/18.51347
+18.51347*33
+max(mp_data$max_HFI)
+#Predict MP concentrations at max HFI
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = max(mp_data$max_HFI), species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+#Predict MP concentrations at max HFI
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = 0, species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+#Predict MP concentrations at max HFI
+PREDS <- predict(fit,
+newdata = (data.frame(mean_HFI = max(mp_data$max_HFI), species = "null")),
+type = "link",
+exclude = "s(species)",
+se.fit = TRUE)
+#mean
+exp(PREDS$fit)
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+316.7115/18.51347
+38.97464/10.18466
+2573.626 / 33.65339
+#Load in the particle size data
+control <- read.csv("data/mp_data/Control_particles_size.csv")
+View(control)
+#Load in the particle size data
+control <- read.csv("data/mp_data/Control_particles_size.csv")[,1:3]
+# This script generates figure 1 in the main text that
+# visualises differences in the study sites and general patterns
+# the plastic concentrations
+# Written by Michael Noonan
+#Import the packages
+library(ggplot2)
+library(terra)
+library(sf)
+library(tidyterra)
+library(gridExtra)
+library(rphylopic)
+#---------------------------------------------------------------------
+# Data import and processing
+#---------------------------------------------------------------------
+#Import the MP datasets
+source("scripts/data_import.R")
+head)control
+head(control)
+library(ggplot2)
+library(gridExtra)
+#Import the MP datasets
+source("scripts/data_import.R")
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05)
+#a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.1)) +
+#scale_y_continuous(limits = c(0,230), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.2, 'cm'),
+legend.spacing.y = unit(0.1, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE)) #+
+#a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.1)) +
+#scale_y_continuous(limits = c(0,230), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+#a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.1)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+#a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.01)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+#a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.02)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+b <-
+ggplot() +
+ggtitle("B") +
+geom_histogram(data = control, aes(Width, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.02)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle width '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.02)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+b <-
+ggplot() +
+ggtitle("B") +
+geom_histogram(data = control, aes(Width, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.02)) +
+scale_y_continuous(limits = c(0,20), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle width '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+bot <-
+grid.arrange(a,b,
+ncol=2,
+nrow=1)
+#Save the figures
+ggsave(bot,
+width = 4.75, height = 1.5, units = "in",
+dpi = 600,
+bg = "transparent",
+file="figures/particle_size_control.png")
+#Save the figures
+ggsave(bot,
+width = 4.75, height = 2, units = "in",
+dpi = 600,
+bg = "transparent",
+file="figures/particle_size_control.png")
+sd(control$Length)
+mean(control$Length)
+sd(control$Length)
+mean(control$Length)
+sd(control$Length)
+range(control$Length)
+a <-
+ggplot() +
+ggtitle("A") +
+geom_histogram(data = control, aes(Length, fill = Sample),
+alpha = 0.8,
+bins = 60,
+col = "black",
+linewidth = 0.05) +
+scale_fill_manual(values = c("#1c7293", "#1b3b6f")) +
+scale_x_log10(expand = c(0,0.02)) +
+scale_y_continuous(limits = c(0,200), expand = c(0,.1)) +
+ylab("Number of particles") +
+xlab(bquote(bold('Particle length '(µm)))) +
+theme_bw() +
+theme_bw() +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+axis.text.y = element_text(size=4, family = "sans"),
+axis.text.x  = element_text(size=4, family = "sans"),
+plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+legend.position = "none",
+legend.title = element_blank(),
+legend.text = element_text(size=5, family = "sans", face = "bold"),
+legend.background = element_rect(fill = "transparent"),
+legend.key.size = unit(0.3, 'cm'),
+legend.spacing.y = unit(0.2, 'cm'),
+panel.background = element_rect(fill = "transparent"),
+plot.background = element_rect(fill = "transparent", color = NA),
+plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+guides(fill = guide_legend(byrow = TRUE))
+a
+mean(control$Width)
+sd(control$Width)
+range(control$Width)
+nrow(control)
+#Save the figures
+ggsave(bot,
+width = 4.75, height = 1.8, units = "in",
+dpi = 600,
+bg = "transparent",
+file="figures/particle_size_control.png")
+mean(sizes$Width)
+sd(sizes$Width)
+range(sizes$Width)

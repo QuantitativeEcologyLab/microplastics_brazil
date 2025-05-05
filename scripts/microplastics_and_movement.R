@@ -1,47 +1,21 @@
 # This script processes runs the analyses investigating the relationship
 # between the observed concentrations of microplastics in blood
 # and the animals' patterns of movement and habitat use.
-# For each covariate, a statistical anaysis is run, and a figure is generated
 
 # Written by Michael Noonan
 
-# Last updated: October 30 2024
 
+#Load in any necessary packages
 library(mgcv)
-library(ggplot2)
-library(gridExtra)
 
-#Import the MP concentration dataset
-mp_data <- read.csv("data/mp_data/All_general.csv")
-mp_data$sex <- as.factor(mp_data$sex)
-mp_data$species <- as.factor(mp_data$species)
-mp_data[which(mp_data$name == "Alvinho/Alvaro"),"name"] <- "Alvinho_Alvaro"
-
-#Import the estimated movement metrics for the 3 species
-tapir_data <- read.csv("data/movement_data/tapir_movement.csv")
-anteater_data <- read.csv("data/movement_data/anteater_movement.csv")
-armadillo_data <- read.csv("data/movement_data/armadillo_movement.csv")
-move_data <- dplyr::bind_rows(tapir_data, anteater_data, armadillo_data)
-
-#Import the estimated land use for the 3 species
-tapir_data <- read.csv("data/movement_data/tapir_land_use.csv")
-anteater_data <- read.csv("data/movement_data/anteater_land_use.csv")
-armadillo_data <- read.csv("data/movement_data/armadillo_land_use.csv")
-land_use <- dplyr::bind_rows(tapir_data, anteater_data, armadillo_data)
-land_use[is.na(land_use)] <- 0
-
-#Merge with the microplastics information
-mp_data <- merge(x = mp_data, y = move_data, by.x = c("name", "species"), by.y = c("ID", "binomial"), all.x = TRUE)
-mp_data <- merge(x = mp_data, y = land_use, by.x = c("name", "species"), by.y = c("ID", "binomial"), all.x = TRUE)
+#Import the MP datasets
+source("scripts/data_import.R")
 
 #Drop any individuals without movement data
 mp_data <- mp_data[!is.na(mp_data$hr),]
 
-#Convert hr to km^2
-mp_data$hr <- mp_data$hr*1e-6
-
 #-------------------------------------------------------------
-# Correlation with home-range size
+# Relationship with home-range size
 #-------------------------------------------------------------
 
 #Test for a correlation between home range size and blood MP concentration
@@ -53,50 +27,8 @@ fit <- gam(mp_ml ~ hr + s(species, bs = "re") + s(hr, species, bs = "re"),
 summary(fit)
 
 
-
-a <- 
-  ggplot(data = mp_data[mp_data$name != "Juliana",], aes(x = hr, y = mp_ml)) +
-  ggtitle("A)") +
-  geom_smooth(method = "gam",
-              formula = y ~ x,
-              method.args = list(family = tw(link = "log")),
-              col = "black",
-              fill = "grey80",
-              linewidth = 0.2,
-              linetype = "dashed") +
-  geom_point(aes(col = species), size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"),
-                      name = "",
-                      labels = c("Myrmecophaga tridactyla", "Priodontes maximus", "Tapirus terrestris")) +
-  ylab("MP concentration (particles/mL)") +
-  xlab(expression(bold(Home~range~size~(km^2))))+
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        legend.text  = element_text(size=5, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "inside",
-        legend.position.inside  = c(0.7,0.95),
-        legend.key.size = unit(0.2, "cm"),
-        legend.key.width = unit(0.2, "cm"),
-        legend.key = element_rect(fill = "transparent", colour = "transparent"),
-        legend.background = element_rect(fill = "transparent"),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-
-
 #-------------------------------------------------------------
-# Correlation with diffusion rate
+# Relationship with diffusion rate
 #-------------------------------------------------------------
 
 #Test for a correlation between home range size and blood MP concentration
@@ -106,45 +38,6 @@ fit <- gam(mp_ml ~ diffusion + s(species, bs = "re") + s(diffusion, species, bs 
            method = "REML")
 
 summary(fit)
-
-
-
-b <- 
-  ggplot(data = mp_data, aes(x = diffusion, y = mp_ml)) +
-  ggtitle("B)") +
-  geom_smooth(method = "gam",
-              formula = y ~ x,
-              method.args = list(family = tw(link = "log")),
-              col = "black",
-              fill = "grey80",
-              size = 0.2,
-              linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab(expression(bold(Diffusion~rate~(m^2~sec^-1))))+
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        legend.text  = element_text(size=5, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        legend.key.size = unit(0.2, "cm"),
-        legend.key.width = unit(0.2, "cm"),
-        legend.key = element_rect(fill = "transparent", colour = "transparent"),
-        legend.background = element_rect(fill = "transparent"),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
 
 
 #-------------------------------------------------------------
@@ -159,43 +52,73 @@ fit <- gam(mp_ml ~ mean_HFI + s(species, bs = "re") + s(mean_HFI, species, bs = 
 
 summary(fit)
 
+#Predict MP concentrations at max HFI
+PREDS <- predict(fit,
+                 newdata = (data.frame(mean_HFI = 0, species = "null")),
+                 type = "link",
+                 exclude = "s(species)",
+                 se.fit = TRUE)
 
-c <- 
-  ggplot(data = mp_data, aes(x = mean_HFI, y = mp_ml)) +
-  ggtitle("C)") +
-  geom_smooth(method = "gam",
-              formula = y ~ x,
-              method.args = list(family = tw(link = "log")),
-              col = "black",
-              fill = "grey80",
-              size = 0.2,
-              linetype = "solid") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab("Mean human footprint index in home range") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
+#mean
+exp(PREDS$fit)
+
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+
+
+#Predict MP concentrations at max HFI
+PREDS <- predict(fit,
+                 newdata = (data.frame(mean_HFI = max(mp_data$max_HFI), species = "null")),
+                 type = "link",
+                 exclude = "s(species)",
+                 se.fit = TRUE)
+
+#mean
+exp(PREDS$fit)
+
+#min
+exp(PREDS$fit - 1.96*PREDS$se.fit)
+
+#max
+exp(PREDS$fit + 1.96*PREDS$se.fit)
+
+#Final steps are to run a series of sensitivity analysis on the HFI effect
+# due to the unblanced distribution of HFI values
+
+#First step is to remove any data points above the 95th quantile of the mean HFI exposure
+mp_data_subset <- mp_data[mp_data$mean_HFI < quantile(mp_data$mean_HFI, .95),]
+
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ mean_HFI + s(species, bs = "re") + s(mean_HFI, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data_subset,
+           method = "REML")
+
+summary(fit)
+
+#Next, remove any data points above the 90th quantile of the mean HFI exposure
+mp_data_subset <- mp_data[mp_data$mean_HFI < quantile(mp_data$mean_HFI, .90),]
+
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ mean_HFI + s(species, bs = "re") + s(mean_HFI, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data_subset,
+           method = "REML")
+
+summary(fit)
+
+#Note how in both instances, the effect size appears stronger,
+# though the direction and significance are unaffected.
 
 
 #-------------------------------------------------------------
 # Correlation with max human footprint index
 #-------------------------------------------------------------
 
-#Test for a correlation between mean HFI and blood MP concentration
+#Test for a correlation between max HFI and blood MP concentration
 fit <- gam(mp_ml ~ max_HFI + s(species, bs = "re") + s(max_HFI, species, bs = "re"),
            family = tw(link = "log"),
            data = mp_data,
@@ -204,118 +127,41 @@ fit <- gam(mp_ml ~ max_HFI + s(species, bs = "re") + s(max_HFI, species, bs = "r
 summary(fit)
 
 
-d <- 
-  ggplot(data = mp_data, aes(x = max_HFI, y = mp_ml)) +
-  ggtitle("D)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab("Maximum human footprint index in home range") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
+#Final steps are to run a series of sensitivity analysis on the HFI effect
 
+#First step is to remove any data points above the 95th quantile of the max HFI exposure
+mp_data_subset <- mp_data[mp_data$max_HFI < quantile(mp_data$max_HFI, .95),]
 
-
-#-------------------------------------------------------------
-# Correlation with agricultural land
-#-------------------------------------------------------------
-
-
-#Test for a correlation between the ammount of agg land in the HR and blood MP concentration
-fit <- gam(mp_ml ~ Agriculture + s(species, bs = "re") + s(Agriculture, species, bs = "re"),
+#Test for a correlation between mean HFI and blood MP concentration
+fit <- gam(mp_ml ~ max_HFI + s(species, bs = "re") + s(max_HFI, species, bs = "re"),
            family = tw(link = "log"),
-           data = mp_data,
+           data = mp_data_subset,
            method = "REML")
 
 summary(fit)
 
-e <- 
-  ggplot(data = mp_data, aes(x = Agriculture, y = mp_ml)) +
-  ggtitle("E)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab("Proportion of home range in agricultural land") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-
-
-#-------------------------------------------------------------
-# Correlation with water and wetlands
-#-------------------------------------------------------------
-
+#Next, remove any data points above the 95th quantile of the max HFI exposure
+mp_data_subset <- mp_data[mp_data$max_HFI < quantile(mp_data$max_HFI, .90),]
 
 #Test for a correlation between mean HFI and blood MP concentration
-fit <- gam(mp_ml ~ Water + s(species, bs = "re") + s(Water, species, bs = "re"),
+fit <- gam(mp_ml ~ max_HFI + s(species, bs = "re") + s(max_HFI, species, bs = "re"),
            family = tw(link = "log"),
-           data = mp_data,
+           data = mp_data_subset,
            method = "REML")
 
 summary(fit)
 
 
-f <- 
-ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
-  ggtitle("F)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab("Proportion of water and wetlands in home range") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
+#Note how again, the direction and significance are unaffected
+# by removing the upper quantile of maximum HFI exposure.
 
 
 #-------------------------------------------------------------
-# Correlation with water and wetlands
+# Correlation with native forests
 #-------------------------------------------------------------
 
 
-#Test for a correlation between mean HFI and blood MP concentration
+#Test for a correlation between native forests and blood MP concentration
 fit <- gam(mp_ml ~ Native_forest + s(species, bs = "re") + s(Native_forest, species, bs = "re"),
            family = tw(link = "log"),
            data = mp_data,
@@ -324,41 +170,33 @@ fit <- gam(mp_ml ~ Native_forest + s(species, bs = "re") + s(Native_forest, spec
 summary(fit)
 
 
-g <- 
-  ggplot(data = mp_data, aes(x = Native_forest, y = mp_ml)) +
-  ggtitle("G)") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("MP concentration (particles/mL)") +
-  xlab("Proportion of natural forest in home range") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 8, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  coord_cartesian(ylim = c(5,170))
+#-------------------------------------------------------------
+# Correlation with agricultural land
+#-------------------------------------------------------------
 
 
-FIG <-
-  grid.arrange(a,b,c,d,e,f,
-               ncol=2,
-               nrow=3)
+#Test for a correlation between the amount of agricultural land in the HR and blood MP concentration
+fit <- gam(mp_ml ~ Agriculture + s(species, bs = "re") + s(Agriculture, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data,
+           method = "REML")
+
+summary(fit)
 
 
-#Save the figures
-ggsave(FIG,
-       width = 4.75, height = 5.1, units = "in",
-       dpi = 600,
-       bg = "transparent",
-       file="figures/Movement_Trends.png")
+#-------------------------------------------------------------
+# Correlation with water and wetlands
+#-------------------------------------------------------------
+
+
+#Test for a correlation between water and wetlands and blood MP concentration
+fit <- gam(mp_ml ~ Water + s(species, bs = "re") + s(Water, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data,
+           method = "REML")
+
+summary(fit)
+
+
+
 
