@@ -112,6 +112,24 @@ rm(key)
 
 
 
+#-------------------------------------------------------------
+# Individual Polymer Counts
+#-------------------------------------------------------------
+
+#Note: Builds off of the sizes data frame generated above
+
+#Build a dataframe of the counts of polymers in each sample
+polymers <- data.frame(table(sizes[,c("sample","polymer")]))
+
+#Reshape from long to wide
+polymers <- reshape(polymers, idvar = "sample", timevar = "polymer", direction = "wide")
+
+#Rename colums
+names(polymers)[2:14] <- colnames(table(sizes[,c("sample","polymer")]))
+
+#Add in meta data on biomes and species
+polymers <- merge(x =  mp_data[,c("sample","species","biome")], y = polymers, by.x = "sample", by.y = "sample")
+
 
 #-------------------------------------------------------------
 # Blank Control Size data

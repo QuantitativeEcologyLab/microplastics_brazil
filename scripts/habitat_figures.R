@@ -1,6 +1,6 @@
-# This script generates figure 1 in the main text that
-# visualises differences in the study sites and general patterns
-# the plastic concentrations
+# This script generates the insets for figure 2a in the main text that
+# visualises the GPS location data overlayed on top of the human footprint index
+# As well as the land classes from MapBiomas
 
 # Written by Michael Noonan
 
@@ -94,19 +94,12 @@ for(i in 1:length(gps_data_paths)){
     square_ext <- ext(x_center - size/2, x_center + size/2,
                       y_center - size/2, y_center + size/2)
     
-    # cilla_sf_buff <- st_buffer(cilla_sf,
-    #                            dist = mmax(width*.2, height*.2))
     
     #Crop HFI based on the buffered extent
     HFI_cropped <- crop(HFI,
                         square_ext,
                         snap = "out")
-    
-    # #Crop HFI based on the buffered extent
-    # HFI_cropped <- crop(HFI,
-    #                     cilla_sf_buff,
-    #                     snap = "out")
-    
+
     
     #----------------------------------------
     #prep the land class raster to match the extent of the data
@@ -130,9 +123,7 @@ for(i in 1:length(gps_data_paths)){
     square_ext <- ext(x_center - size/2, x_center + size/2,
                       y_center - size/2, y_center + size/2)
     
-    # EXT <- ext(cilla_sf_2)
-    # cilla_sf_buff <- st_buffer(cilla_sf_2,
-    #                            dist = max(c((EXT[2] - EXT[1])*30000, (EXT[4] - EXT[3])*30000)))
+    #Crop the land class raster
     land_cropped <- crop(land_types,
                          square_ext,
                          snap = "out")

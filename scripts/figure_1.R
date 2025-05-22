@@ -1,6 +1,8 @@
 # This script generates figure 1 in the main text that
 # visualises differences in the study sites and general patterns
 # the plastic concentrations
+# Note: the indiviudal panels are generated in this script
+# but need to be assembled outside of R
 
 # Written by Michael Noonan
 
@@ -34,7 +36,7 @@ HFI <- crop(HFI, brasil) #Note: can mask directly, but cropping first keeps it m
 HFI <- mask(HFI, brasil) #Note: this step is slow
 HFI <- HFI/1000 #rescale; also slow
 
-# Import the biome boundaries
+#Import the three biome boundaries obtained from: https://terrabrasilis.dpi.inpe.br/en/download-files/
 biomes <- st_read("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/biomes",
                   crs = 4326,
                   quiet = TRUE)
@@ -89,7 +91,7 @@ a <-
   ggplot() +
   ggtitle("A") +
   geom_spatraster(data = HFI, maxcell = 5e+07,
-                  alpha = 0.7) +
+                  alpha = 1) +
   scale_fill_gradient(name = "Human Footprint Index",
                       low = "#eeeeee",
                       high = "black",
@@ -121,7 +123,7 @@ a <-
         axis.text.x  = element_blank(),
         axis.ticks = element_blank(),
         strip.background=element_blank(),
-        plot.margin = unit(c(0.2,3,-0.3,-1.5), "cm")) +
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
   
   #Add locations of the animals
   add_phylopic(armadillo_pic,
@@ -154,218 +156,166 @@ a <-
                ysize = 150000, alpha = 1, fill = "#619b8a")
 
 
-
-#---------------------------------------------------------------------
-# Figure 1B - Barplot of polymer abundances
-#---------------------------------------------------------------------
-
-# Define the colors for each of the polymers
-polymer_colors <- c(
-  "ABS" = "#94D2BD",
-  "Cellulose" = "#E9D8A6",
-  "PET" = "grey35",
-  "Polyamide" = "#CA6702",
-  "Polyester" = "#9B2226",
-  "Polyethylene" = "#6d597a",
-  "Polypropylene" = "#005F73",
-  "Polystyrene" = "#0A9396",
-  "PVC" = "#8d96a3",
-  "Rubber" = "green4",
-  "Silicon" = "#355070",
-  "Teflon" = "coral2",
-  "Other" = "#EE9B00"
-)
-
-mp_data_long$polymer <- factor(mp_data_long$polymer, levels = names(polymer_colors))
-
-# First, reorder the 'Sample' column by its numeric component
-ORDER <- mp_data[order(mp_data$species, mp_data$mp_ml), "sample"]
-mp_data_long$sample <- factor(mp_data_long$sample, levels = ORDER, ordered = TRUE)
-
-# Create the bar plot with your custom colors
-b <- 
-  ggplot(data = mp_data_long, 
-         aes(x = sample,
-             y = concentration,
-             fill = polymer)) +
-  ggtitle("B") +
-  geom_vline(xintercept = 21.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
-  geom_vline(xintercept = 26.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
-  geom_bar(stat = "identity", alpha = 0.9) +
-  scale_fill_manual(values = polymer_colors) +
-  theme_bw() +
-  theme(panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(size = 0.2),
-        axis.line.y = element_line(size = 0.2),
-        axis.ticks.x = element_line(size = 0.2),
-        axis.ticks.y = element_blank(),
-        axis.title.x = element_text(size = 5, family = "sans", face = "bold"),
-        axis.title.y = element_blank(),#element_text(size = 5, family = "sans", face = "bold"),
-        axis.text.x = element_text(size = 4, family = "sans"),
-        axis.text.y = element_blank(),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
-        legend.position = c(0.8, 0.8),
-        legend.title = element_blank(),
-        legend.text = element_text(size = 3, family = "sans", face = "bold"),
-        legend.background = element_rect(fill = "transparent", colour = "transparent"),
-        legend.key = element_rect(fill = "transparent", colour = "transparent"),
-        legend.key.size = unit(0.08, "cm"),
-        legend.key.width = unit(0.2, "cm"),
-        legend.spacing.y = unit(-0.1, "cm"),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.4,0.1,-0,-5.5), "cm")
-  ) +
-  scale_x_discrete(breaks = ORDER) +
-  scale_y_continuous(expand = c(0, 0)) +
-  # scale_y_log10(breaks = c(0.01,0.1,1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000),
-  #               labels = c(0.01,0.1,1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000),
-  #               expand = c(0, 0)) +
-  # annotation_logticks(sides="b",
-  #                     outside = TRUE,
-  #                     size = 0.2,
-  #                     short = unit(0.05, "cm"),
-  #                     mid = unit(0.05, "cm"),
-  #                     long = unit(0.1, "cm")) +
-  xlab(expression(bold(Sample))) +
-  ylab(expression(bold(Microplastic~concentration~(particles/mL)))) +
-  coord_flip() +
-  add_phylopic(anteater_pic,
-               x = 10,
-               y = 300,
-               ysize = 2, alpha = 1, fill = "#619b8a") +
-  add_phylopic(armadillo_pic,
-               x = 24,
-               y = 300,
-               ysize = 2, alpha = 1, fill = "#bb3e03") +
-  add_phylopic(tapir_pic,
-               x = 38,
-               y = 300,
-               ysize = 2, alpha = 1, fill = "#005f73",
-               horizontal = TRUE)
-
-
-top <-
-  grid.arrange(a,b,
-               ncol=2,
-               nrow=1,
-               widths=c(7,0.25))
-
-
-#Save the figures
-ggsave(top,
-       width = 4.75, height = 2.5, units = "in",
+#Save the figure
+ggsave(a,
+       width = 2.375, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/figure_1_top.png")
+       file="figures/figure_1a.png")
+
 
 
 #---------------------------------------------------------------------
-# Figure 1C & D - Histograms of size distributions
-#---------------------------------------------------------------------
+# Figure 1B - Heatmap of polymer abundances
 
 
 
-#Load in the data
-metadata <- read.csv("data/mp_data/All_general.csv")
-sizes <- read.csv("data/mp_data/All_size.csv")
-sizes <- merge(x = metadata, y = sizes, by.x = "sample", by.y = "Sample")
+# First, reorder the 'Sample' column by its numeric component
+ORDER <- metadata[order(metadata$species), "sample"]
+data_long$sample <- factor(data_long$sample, levels = ORDER, ordered = TRUE)
 
 
-c <- 
-  ggplot() +
-  ggtitle("C") +
-  geom_histogram(data = sizes, aes(Length, fill = species),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05) +
-  scale_fill_manual(values = c("#619b8a", "#bb3e03", "#005f73")) +
-  scale_x_log10(expand = c(0,0.1)) +
-  scale_y_continuous(limits = c(0,230), expand = c(0,.1)) +
-  ylab("Number of particles") +
-  xlab(bquote(bold('Particle length '(µm)))) +
+#Adjust the polymer names
+data_long$Microplastic <- stringr::str_to_title(data_long$Microplastic)
+data_long$Microplastic[data_long$Microplastic == "Abs"] <- "ABS"
+data_long$Microplastic[data_long$Microplastic == "Pet"] <- "PET"
+data_long$Microplastic[data_long$Microplastic == "Polyvinyl Chloride"] <- "PVC"
+
+# Heatmap
+b <- 
+  ggplot(data_long, aes(Microplastic, sample, fill= log(Adjusted+1))) + 
+  ggtitle("B") +
+  geom_tile(alpha = 0.95) +
+  scico::scale_fill_scico(palette = "lipari",
+                          name = "Particles/mL",
+                          breaks = c(0,log(10),log(50),log(400)),
+                          labels = c(0,10,50,400)) +
+  geom_hline(yintercept = 21.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
+  geom_hline(yintercept = 26.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x  = element_text(size=4,
+                                    family = "sans",
+                                    angle = 90,
+                                    face = "bold",
+                                    color = "black",
+                                    hjust = 1, vjust = 0.5),
+        axis.ticks.y = element_blank(),
+        axis.ticks.x = element_blank(),
         plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
-        legend.position = "none",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_text(size=5, family = "sans", face = "bold", vjust = -2, hjust = 0.5),
+        legend.text = element_text(size=4, family = "sans", face = "bold", vjust = 4),
         legend.background = element_rect(fill = "transparent"),
         legend.key.size = unit(0.2, 'cm'),
         legend.spacing.y = unit(0.1, 'cm'),
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
         plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE)) +
-    add_phylopic(anteater_pic,
-                 x = 150,
-                 y = 200,
-                 ysize = 14, alpha = 1, fill = "#619b8a") +
-    add_phylopic(armadillo_pic,
-                 x = 150,
-                 y = 170,
-                 ysize = 14, alpha = 1, fill = "#bb3e03") +
-    add_phylopic(tapir_pic,
-                 x = 150,
-                 y = 140,
-                 ysize = 14, alpha = 1, fill = "#005f73",
-                 horizontal = TRUE)
+  scale_y_discrete(expand = c(0, 0)) +
+  scale_x_discrete(expand = c(0, 0)) +
+  guides(fill = guide_colorbar(title.position = "top", ticks.colour = NA, barwidth = 10,
+                               barheight = 0.3, direction = "horizontal"))
 
 
-
-d <- 
-  ggplot() +
-  ggtitle("D") +
-  geom_histogram(data = sizes, aes(Width, fill = species),
-                 alpha = 0.8,
-                 bins = 50,
-                 col = "black",
-                 linewidth = 0.05) +
-  scale_fill_manual(values = c("#619b8a", "#bb3e03", "#005f73")) +
-  scale_x_log10(expand = c(0,0.01)) +
-  scale_y_continuous(limits = c(0,280), expand = c(0,.1)) +
-  ylab("Number of particles") +
-  xlab(bquote(bold('Particle width '(µm)))) +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
-        legend.position = "none",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
-        legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.3, 'cm'),
-        legend.spacing.y = unit(0.2, 'cm'),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE))
-
-
-
-
-bot <-
-  grid.arrange(c,d,
-               ncol=2,
-               nrow=1)
-
-
-#Save the figures
-ggsave(bot,
-       width = 4.75, height = 1.5, units = "in",
+#Save the figure
+ggsave(b,
+       width = 2.375, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/figure_1_bottom.png")
+       file="figures/figure_1b.png")
+
+
+#---------------------------------------------------------------------
+# Figure 1C - E - Radar plots of polymer abundances
+#---------------------------------------------------------------------
+
+
+mean_polymers <- aggregate(Adjusted ~ species + Microplastic, FUN = "mean", data = data_long)
+mean_polymers <- reshape(data = mean_polymers,
+                         idvar = "species",
+                         timevar = "Microplastic",
+                         v.names = "Adjusted",
+                         direction = "wide")
+#Adjust the polymer names
+names(mean_polymers)[-1] <- sub("Adjusted.","",names(mean_polymers)[-1])
+names(mean_polymers)[11] <- "PVC"
+
+
+#Define the min and max (specific requirement of the fmsb package)
+mean_polymers[4,] <- 40 #Max
+mean_polymers[5,] <- 0 #Min
+
+row.names(mean_polymers) <- c("Myrmecophaga_tridactyla",
+                              "Priodontes_maximus",
+                              "Tapirus_terrestris",
+                              "Max",
+                              "Min")
+
+mean_polymers <- mean_polymers[c(4:5,1:3),]
+
+# Generate and save the figures
+png(filename = "figures/figure_1cde.png",
+    width = 6, height = 2, units = "in",
+    bg = "transparent",
+    res = 600)
+
+par(mfrow = c(1,3),
+    mar = c(0.2,0.1,0.2,0.1),
+    font.axis = 2,
+    font = 2)
+# Create the radar charts for the anteaters
+radarchart(mean_polymers[c(1:2,3),-1],
+           axistype = 1,
+           pty = NA,
+           pcol = "#619b8a",
+           pfcol = adjustcolor("#619b8a", alpha.f = 0.3),
+           plwd = 1,
+           cglcol = "grey",
+           cglty = 1,
+           axislabcol = "grey",
+           caxislabels = c(0, 10, 20, 30, 40),
+           calcex = 0.5,
+           cglwd = 0.4,
+           vlcex = 0.48)
+title(main = "C",
+      cex.main = 0.8, font.main= 2, col.main= "black", adj = 0, line = -1)
+
+# Create the radar chart for the armadillos
+radarchart(mean_polymers[c(1:2,4),-1],
+           axistype = 1,
+           pty = NA,
+           pcol = "#bb3e03",
+           pfcol = adjustcolor("#bb3e03", alpha.f = 0.3),
+           plwd = 1,
+           cglcol = "grey",
+           cglty = 1,
+           axislabcol = "grey",
+           caxislabels = c(0, 10, 20, 30, 40),
+           calcex = 0.5,
+           cglwd = 0.4,
+           vlcex = 0.48)
+title(main = "D", cex.main = 0.8, font.main= 2, col.main= "black", adj = 0, line = -1)
+
+# Create the radar chart for the tapirs
+radarchart(mean_polymers[c(1:2,5),-1],
+           axistype = 1,
+           pty = NA,
+           pcol = "#005f73",
+           pfcol = adjustcolor("#005f73", alpha.f = 0.3),
+           plwd = 1,
+           cglcol = "grey",
+           cglty = 1,
+           axislabcol = "grey",
+           caxislabels = c(0, 10, 20, 30, 40),
+           calcex = 0.5,
+           cglwd = 0.4,
+           vlcex = 0.48)
+title(main = "E", cex.main = 0.8, font.main= 2, col.main= "black", adj = 0, line = -1)
+
+dev.off()
 

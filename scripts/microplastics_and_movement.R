@@ -184,6 +184,21 @@ fit <- gam(mp_ml ~ Agriculture + s(species, bs = "re") + s(Agriculture, species,
 summary(fit)
 
 
+
+
+#Test for a correlation between HFI and blood MP concentration after de-trending agriculture
+
+#Estimate the residual HFI after accounting for agriculture
+mp_data$agg_residuals <- residuals(lm(mean_HFI ~ Agriculture, data = mp_data))
+
+#Test for a correlation with the residuals
+fit <- gam(mp_ml ~ agg_residuals + s(species, bs = "re") + s(agg_residuals, species, bs = "re"),
+           family = tw(link = "log"),
+           data = mp_data,
+           method = "REML")
+
+summary(fit)
+
 #-------------------------------------------------------------
 # Correlation with water and wetlands
 #-------------------------------------------------------------
@@ -196,6 +211,7 @@ fit <- gam(mp_ml ~ Water + s(species, bs = "re") + s(Water, species, bs = "re"),
            method = "REML")
 
 summary(fit)
+
 
 
 
