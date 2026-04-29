@@ -1,0 +1,9 @@
+﻿Name,Species,Bioma,Age class,Age (years),Weight (Kg),Gender,Collection date,MP concentration (particle/mL),MP total Weight (ug),MP concenrartion (ug/mL),lat,long,x,y,UTM_zone
+Aaron,Tapirus terrestris,Pantanal,Adult,8,165,male,26.06.22,286.25,0.0568,0.071,-19.27016754,-55.76631604,629642,7868818,21k
+Dudu,Tapirus terrestris,Amazon,Young,2.4,190,male,13.08.22,1211.25,0.315,0.39375,-12.87485248,-52.42716116,345145,8576274,22l
+George,Myrmecophaga tridactyla,Cerrado,Adult,NA,33,male,17.06.21,30,0.0154,0.01925,-21.6618,-53.5929,NA,NA,NA
+Gilia,Tapirus terrestris,Pantanal,Adult,5,165,female,24.06.22,6.25,0.000251934,0.000314918,-19.27016754,-55.76631604,629642,7868818,21k
+Macarrao,Tapirus terrestris,Pantanal,Young,2.5,125,male,04.07.22,513.75,0.121,0.15125,-19.31930738,-55.75750547,630529,7863373,21k
+Marave-Caiman,Tapirus terrestris,Pantanal,Young,NA,NA,female,21.12.22,2.5,3.72E-05,0.0000465,-19.9091715,-56.2505212,578446,7798395,21k
+Sara,Priodontes maximus,Pantanal,Young,NA,29.7,female,18.12.21,1.25,1.79E-05,0.000022375,NA,NA,NA,NA,NA
+Yutike-Caiman,Tapirus terrestris,Pantanal,Adult,NA,NA,male,21.12.22,52.5,0.0219752,0.027469,-19.92615962,-56.25054625,578435,7796515,21k

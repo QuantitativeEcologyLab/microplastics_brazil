@@ -1,0 +1,238 @@
+# This script processes the movement data for the lowland tapirs
+# The main steps carried out by this script are:
+# 1. import the gps location data
+# 2. fit the continuous time movement models
+# 3. extract land use
+# 4. save all outputs for subsequent analyses
+
+
+# Written by Michael Noonan
+
+# Last updated: October 30 2024
+
+# Load the requisite packages
+library(ctmm) # for fitting the movement models
+library(terra) # For handling the habitat rasters
+library(weights) # For calculating the weighted proportions of the land class types
+
+# Source any custom function
+source("scripts/00_custom_project_functions.R") # simplifies analysing gps data for multiple individuals
+
+#-------------------------------------------------------------
+# Fit movement models and save information 
+#-------------------------------------------------------------
+
+# Import the tapir gps data and convert to a telemetry object
+# Note: these data are not on GitHub
+DATA <- read.csv("data/gps_data/tapir_gps_data.csv")
+DATA <- as.telemetry(DATA, mark.rm = TRUE)
+uere(DATA) <- 1
+
+#Plot to confirm the import worked as expected
+plot(DATA, col = viridis::viridis(length(DATA)))
+
+#Confirm which animals from the microplastics dataset have movement data
+mp_data <- read.csv("data/mp_data/blood_microplastics_individual_summary.csv")
+mp_IDs <- mp_data[which(mp_data$species == "Tapirus_terrestris"),"name"]
+mp_IDs[mp_IDs %in% names(DATA)]
+mp_IDs[!mp_IDs %in% names(DATA)]
+
+#20 animals have gps data, 6 are missing gps data (this is correct)
+
+#Drop the GPS data for the animals we don't have mp data for
+KEEPERS <- names(DATA)[names(DATA)  %in% mp_IDs]
+DATA <- DATA[KEEPERS]
+
+
+#Define the file paths for saving the movement model outputs
+Model_path <- paste("~/Dropbox/UBC/Projects/microplastics_brazil/results/tapir_movement/movement_models", sep = "")
+HR_path <- paste("~/Dropbox/UBC/Projects/microplastics_brazil/results/tapir_movement/akdes", sep = "")
+Fig_Path <- paste("~/Dropbox/UBC/Projects/microplastics_brazil/results/tapir_movement/figures", sep = "")
+
+
+#Then walk through each individual sequentially
+for(j in 1:length(DATA)){
+  
+  cat("Working on individual ", j, " of ", length(DATA), "\n")
+  
+  #Extract the current individual
+  
+  if(class(DATA) == "list") {cilla <- DATA[[j]]} else {cilla <- DATA}
+  
+  RESULTS <- tryCatch(
+    {
+      RESULTS <- CTMM_FIT(cilla,
+                          Model_path = Model_path,
+                          Fig_Path = Fig_Path,
+                          HR_path = HR_path,
+                          error = FALSE,
+                          binomial = "Tapirus_terrestris")
+    }, error=function(err) {
+      message(cat("Model fitting failed, returning NAs \n"))
+      
+      RESULTS <- as.data.frame(t(unlist(c("Tapirus_terrestris",
+                                          cilla@info[1],
+                                          rep(NA, 23)))))
+      
+      return(RESULTS)
+    }
+  )
+  
+  if(j == 1){
+    
+    write.table(RESULTS,
+                file = "~/Dropbox/UBC/Projects/microplastics_brazil/data/movement_summaries/tapir_movement_summary.csv",
+                row.names=FALSE,
+                col.names=TRUE,
+                sep=",",
+                append=TRUE)
+    
+  } else {
+    
+    write.table(RESULTS,
+                file = "~/Dropbox/UBC/Projects/microplastics_brazil/data/movement_summaries/tapir_movement_summary.csv",
+                row.names=FALSE,
+                col.names=FALSE,
+                sep=",",
+                append=TRUE)
+  }
+  
+}#Closes the loop that runs over the telemetry object
+
+
+
+#-------------------------------------------------------------
+# Extract land use
+#-------------------------------------------------------------
+
+#Import the land classification data for Brazil
+#Data are from here: https://brasil.mapbiomas.org/en/
+land_types <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/brasil_coverage_2022_projected.tif")
+development <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/development.tif")
+
+# Import the human footprint index raster from: https://www.frontiersin.org/articles/10.3389/frsen.2023.1130896/full
+#Data are available here: https://source.coop/repositories/vizzuality/hfp-100/description
+HFI <- rast("~/Dropbox/UBC/Projects/microplastics_brazil/data/environmental_data/hfp_2021_100m_v1-2_cog.tif")
+
+
+# Import and process the waste management facility data
+waste_sites <- read.csv("data/environmental_data/waste_sites.csv")
+waste_sites <- vect(waste_sites, geom = c("lon", "lat"), crs = "EPSG:4326")
+waste_sites <- project(waste_sites, "EPSG:5641")
+
+
+# Note: the rasters are not on GitHub due to file size limitations
+
+
+RES <- list()
+
+# Then walk through each individuals for that species
+for(i in 1:length(DATA)){
+  
+  # Generate a brief message to keep track of progress
+  cat("Working on individual ", i, " of ", length(DATA), "\n")
+  
+  
+  #Import the HR estimate for the ith animal
+  PATH <- file.path("~/Dropbox/UBC/Projects/microplastics_brazil/results/tapir_movement/akdes",
+                    paste("AKDE_",
+                          DATA[[i]]@info[1],
+                          ".rda",
+                          sep = ""))
+  load(PATH)
+  
+  #---------
+  #Data carpentry to get the home range PDF into the correct format for extracting values
+  #---------
+  HR <- rast(raster(AKDE, DF = "PMF"))
+  HR2 <- project(HR, crs(HFI), res = res(HFI))
+  HR.df2 <- terra::as.data.frame(HR2, xy = TRUE, na.rm = TRUE)
+  HR.df2$layer <- HR.df2$layer/sum(HR.df2$layer)   #Renormalize
+  HR <- project(HR, crs(land_types), res = res(land_types))
+  HR.df <- terra::as.data.frame(HR, xy = TRUE, na.rm = TRUE)
+  HR.df$layer <- HR.df$layer/sum(HR.df$layer)  #Renormalize
+  
+  HR3 <- project(HR, crs(development), res = res(development))
+  HR3[HR3 == 0] <- NA
+  HR3.df <- terra::as.data.frame(HR3, xy = TRUE, na.rm = TRUE)
+  HR3.df$layer <- HR3.df$layer/sum(HR3.df$layer)  #Renormalize
+  
+  HR_95 <- SpatialPolygonsDataFrame.UD(AKDE,level.UD=0.95)
+  HR_95 <- vect(as.sf(HR_95))
+  HR_95 <- project(HR_95, crs(development))
+  
+  #---------
+  #calculate mean and minimum distance to development
+  #---------
+  #Expand the extent of the HR PDF by 40x (larger buffer here because some tapirs were further from development)
+  e <- ext(HR3)
+  cx <- (e$xmin + e$xmax) / 2
+  cy <- (e$ymin + e$ymax) / 2
+  hw_x <- (e$xmax - e$xmin) / 2 * 40
+  hw_y <- (e$ymax - e$ymin) / 2 * 40
+  HR_ext <- ext(cx - hw_x, cx + hw_x, cy - hw_y, cy + hw_y)
+  
+  #Crop and mask the development (0/1) raster
+  dev_cropped <- crop(development, HR_ext)
+  distance_to_development <- terra::distance(dev_cropped)
+  min_dist_development <- min(terra::distance(HR_95, as.points(dev_cropped)))
+  
+  
+  #Calculate mean and minimum distance from development
+  HR3.df$distance_to_development <- extract(distance_to_development, HR3.df[,1:2])[,2]
+  mean_dist_development <- sum(HR3.df$layer*HR3.df$distance_to_development)
+  
+  
+  #---------
+  #calculate mean distance to waste treatment facility
+  #---------
+  #Crop and mask the development (0/1) raster
+  distance_to_waste <- terra::distance(HR3, waste_sites)
+  HR3.df$distance_to_waste <- extract(distance_to_waste, HR3.df[,1:2])[,2]
+  mean_dist_waste <- sum(HR3.df$layer*HR3.df$distance_to_waste)
+  
+  #---------
+  #Extract non-distance habitat values
+  #---------
+  HR.df2$HFI <- extract(HFI, HR.df2[,1:2])[,2]/1000
+  HR.df$land_class <- extract(land_types, HR.df[,1:2])[,2]
+  HR.df$land_class[HR.df$land_class %in% c("1","3", "4","5","6","49")] <- "Native_forest"
+  HR.df$land_class[HR.df$land_class %in% c("9")] <- "Forestry"
+  HR.df$land_class[HR.df$land_class %in% c("12","15")] <- "Pasture"
+  HR.df$land_class[HR.df$land_class %in% c("14","18","19","20","21","39","40","41","62","36","46","47","35","48")] <- "Agriculture"
+  HR.df$land_class[HR.df$land_class %in% c("24","25","30","75")] <- "Development"
+  HR.df$land_class[HR.df$land_class %in% c("11","26","33")] <- "Water"
+  
+  # Use the home range PDF to calculate the weighted proportions of time spent the different land class types
+  PROPS <- round(wpct(HR.df$land_class, HR.df$layer)*100,2)
+  PROPS2 <- data.frame(class = names(PROPS),
+                       proportion = as.numeric(PROPS))
+  PROPS <- data.frame(t(PROPS2))[2,]
+  names(PROPS) <- PROPS2$class
+  
+  
+  res <- data.frame(binomial = "Tapirus_terrestris")
+  res$ID <- AKDE@info$identity
+  res$mean_HFI <- sum(HR.df2$layer*HR.df2$HFI)
+  res$max_HFI <- max(HR.df2$HFI)
+  res$mean_dist_development <- mean_dist_development
+  res$min_dist_development <- min_dist_development
+  res$mean_dist_waste <- mean_dist_waste
+  res <- cbind(res,PROPS)
+  
+  RES[[i]] <- res
+  
+} # Closes the loop that runs over the telemetry object (i.e., i)
+
+
+res <- do.call(dplyr::bind_rows, RES)
+res[is.na(res)] <- 0
+
+# Save the land use data as a csv
+write.table(res,
+            file = "~/Dropbox/UBC/Projects/microplastics_brazil/data/movement_summaries/tapir_land_use_summary.csv",
+            row.names=FALSE,
+            col.names=TRUE,
+            sep=",")
+
+
