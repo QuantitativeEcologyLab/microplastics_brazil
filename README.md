@@ -105,7 +105,11 @@ MapBiomas Brazil land use and land cover classification.
 
 ## Workflow
 
+<<<<<<< HEAD
 Scripts should be run in the following order. Scripts 05 onward require scripts 00-04 to have been run first but are otherwise independent of each other.
+=======
+Scripts should be run in the following order. Scripts 05 onward require scripts 00–04 to have been run first but are otherwise independent of each other.
+>>>>>>> 10c3184d928c37a1697cb86521eefd8d627b0ffd
 
 | Script | Description |
 |--------|-------------|

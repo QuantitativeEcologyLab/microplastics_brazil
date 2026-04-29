@@ -100,9 +100,15 @@ a <-
   guides(fill = guide_colorbar(title.position = "top", ticks.colour = NA, barwidth = 5,
                                barheight = 0.3, direction = "horizontal")) +
   geom_sf(data = brasil, size = 0.2, fill = "transparent", linewidth = 0.1, col = "black") +
+<<<<<<< HEAD
   #geom_sf(data = amazon, size = 0.2, fill = "#007200", linewidth = 0.1, col = "transparent", alpha = 0.3) +
   #geom_sf(data = cerrado, size = 0.2, fill = "#e9c46a", linewidth = 0.1, col = "transparent", alpha = 0.3) +
   #geom_sf(data = pantanal, size = 0.2, fill = "#0a9396", linewidth = 0.1, col = "transparent", alpha = 0.3) +
+=======
+  geom_sf(data = amazon, size = 0.2, fill = "#007200", linewidth = 0.1, col = "transparent", alpha = 0.3) +
+  geom_sf(data = cerrado, size = 0.2, fill = "#e9c46a", linewidth = 0.1, col = "transparent", alpha = 0.3) +
+  geom_sf(data = pantanal, size = 0.2, fill = "#0a9396", linewidth = 0.1, col = "transparent", alpha = 0.3) +
+>>>>>>> 10c3184d928c37a1697cb86521eefd8d627b0ffd
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),

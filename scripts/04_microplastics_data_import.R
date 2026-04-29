@@ -153,7 +153,11 @@ polymers <- merge(x = mp_data[,c("sample","species","biome")], y = polymers, by.
 
 
 #Load in the particle size data in the controls
+<<<<<<< HEAD
 control <- read.csv("data/mp_data/blank_controls_particle_sizes.csv")[,1:4]
+=======
+control <- read.csv("data/mp_data/blank_controls_particle_sizes.csv")[,1:3]
+>>>>>>> 10c3184d928c37a1697cb86521eefd8d627b0ffd
 
 #Clean up the polymer names
 polymer_names <- c(
