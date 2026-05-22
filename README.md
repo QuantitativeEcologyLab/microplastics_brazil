@@ -73,8 +73,8 @@ scripts/
     10_sensitivity_analyses.R
     11_figure_1.R
     12_figure_2.R
-    13_figure_3.R
-    14_supplementary_figures.R
+    13_supplementary_figures.R
+    14_supplementary_figure_4.R
 
 figures/
     main_text/                                        # Composite manuscript figures
@@ -124,8 +124,8 @@ Scripts should be run in the following order. Scripts 05 onward require scripts 
 | `10_sensitivity_analyses.R` | Sensitivity analyses including species-specific models and influential point diagnostics |
 | `11_figure_1.R` | Generates Figure 1 |
 | `12_figure_2.R` | Generates Figure 2 |
-| `13_figure_3.R` | Generates Figure 3 |
-| `14_supplementary_figures.R` | Generates supplementary figures |
+| `13_supplementary_figures.R` | Generates supplementary figures |
+| `14_supplementary_figure_4.R` | Generates supplementary figure 4 |
 
 ## Citation
 
