@@ -171,7 +171,6 @@ c <-
 
 
 
-
 #Combine
 FIG <-
   grid.arrange(b,c,

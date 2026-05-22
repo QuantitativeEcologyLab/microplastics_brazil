@@ -96,7 +96,7 @@ for(i in 1:length(gps_data_paths)){
     HFI_cropped <- crop(HFI,
                         square_ext,
                         snap = "out")
-
+    
     
     #----------------------------------------
     #prep the land class raster to match the extent of the data
@@ -187,14 +187,14 @@ for(i in 1:length(gps_data_paths)){
     #Generate the land class figure
     
     land_use_figure <- 
-    ggplot() +
+      ggplot() +
       geom_spatraster(data = land_cropped, maxcell = 5e+07,
                       alpha = 0.7, aes(fill = brasil_coverage_2022_collection10)) +
       geom_sf(data = cilla_sf_2, size = 0.2, alpha = 0.9, col = COL, shape = 16) +
       
       scale_fill_manual(breaks = c(94,95,96,97,98,99),
-                          labels = c("Other", "Water", "Development", "Agriculture", "Pasture", "Native Forest"),
-                          values = c("grey70", "#168aad", "#343a40", "#e9c46a","#99d98c","#31572c"),
+                        labels = c("Other", "Water", "Development", "Agriculture", "Pasture", "Native Forest"),
+                        values = c("grey70", "#168aad", "#343a40", "#e9c46a","#99d98c","#31572c"),
                         name = "Land Class") +
       theme_bw() +
       theme(panel.grid.major = element_blank(),

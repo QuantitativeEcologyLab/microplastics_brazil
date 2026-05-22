@@ -14,7 +14,7 @@ source("scripts/04_microplastics_data_import.R")
 
 
 #---------------------------------------------------------------------
-# Figure 3A - heatmap of polymer abundances
+# Figure S4A - heatmap of polymer abundances
 #---------------------------------------------------------------------
 
 
@@ -65,7 +65,7 @@ A <-
 
 
 #---------------------------------------------------------------------
-# Figure 3B -D - Radar barplots of polymer abundances in each study site
+# Figure S4B -D - Radar barplots of polymer abundances in each study site
 #---------------------------------------------------------------------
 
 
@@ -200,4 +200,4 @@ ggsave(FIG,
        width = 2.375*2, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_1.png")
+       file="figures/supplementary/extended_data_figure_4.png")

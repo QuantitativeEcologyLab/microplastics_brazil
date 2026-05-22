@@ -88,15 +88,6 @@ top <-
   ) +
   scale_x_discrete(breaks = ORDER) +
   scale_y_continuous(expand = c(0, 0)) +
-  # scale_y_log10(breaks = c(0.01,0.1,1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000),
-  #               labels = c(0.01,0.1,1,10,100,1000,10000,100000,1000000,10000000,100000000,1000000000,10000000000,100000000000),
-  #               expand = c(0, 0)) +
-  # annotation_logticks(sides="b",
-  #                     outside = TRUE,
-  #                     size = 0.2,
-  #                     short = unit(0.05, "cm"),
-  #                     mid = unit(0.05, "cm"),
-  #                     long = unit(0.1, "cm")) +
   xlab(expression(bold(Sample))) +
   ylab(expression(bold(Microplastic~concentration~(particles/mL)))) +
   coord_flip() +
@@ -221,254 +212,17 @@ ggsave(FIG,
        width = 4.75, height = 4.5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_2.png")
+       file="figures/supplementary/extended_data_figure_1.png")
 
 
-
-#-------------------------------------------------------------
-# Figure S2 - Relationships between habitat use and microplastic concentrations 
-#-------------------------------------------------------------
-
-#-------------------------------------------------------------
-# Figure S2a - Relationship with home-range size
-
-
-a <- 
-  ggplot(data = mp_data[mp_data$name != "Juliana",], aes(x = hr, y = mp_ml)) +
-  ggtitle("A") +
-  geom_smooth(method = "gam",
-              formula = y ~ x,
-              method.args = list(family = tw(link = "log")),
-              col = "black",
-              fill = "grey80",
-              linewidth = 0.2,
-              linetype = "dashed") +
-  geom_point(aes(col = species), size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"),
-                      name = "",
-                      labels = c("Myrmecophaga tridactyla", "Priodontes maximus", "Tapirus terrestris")) +
-  ylab("Microplastics (particles/mL)") +
-  xlab(expression(bold(Home~range~size~(km^2))))+
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        legend.text  = element_text(size=5, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        legend.position.inside  = c(0.7,0.95),
-        legend.key.size = unit(0.2, "cm"),
-        legend.key.width = unit(0.2, "cm"),
-        legend.key = element_rect(fill = "transparent", colour = "transparent"),
-        legend.background = element_rect(fill = "transparent"),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170)) +
-  add_phylopic(anteater_pic,
-               x = 28,
-               y = 160,
-               ysize = 12, alpha = 1, fill = "#619b8a") +
-  add_phylopic(armadillo_pic,
-               x = 24,
-               y = 160,
-               ysize = 12, alpha = 1, fill = "#bb3e03") +
-  add_phylopic(tapir_pic,
-               x = 20,
-               y = 160,
-               ysize = 12, alpha = 1, fill = "#005f73",
-               horizontal = TRUE)
-
-
-
-
-
-#-------------------------------------------------------------
-# Figure S2B - Relationship with diffusion rate
-
-
-b <- 
-  ggplot(data = mp_data, aes(x = diffusion, y = mp_ml)) +
-  ggtitle("B") +
-  geom_smooth(method = "gam",
-              formula = y ~ x,
-              method.args = list(family = tw(link = "log")),
-              col = "black",
-              fill = "grey80",
-              size = 0.2,
-              linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("Microplastics (particles/mL)") +
-  xlab(expression(bold(Diffusion~rate~(m^2~sec^-1))))+
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        legend.text  = element_text(size=5, family = "sans", face = "bold"),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        legend.key.size = unit(0.2, "cm"),
-        legend.key.width = unit(0.2, "cm"),
-        legend.key = element_rect(fill = "transparent", colour = "transparent"),
-        legend.background = element_rect(fill = "transparent"),
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-#-------------------------------------------------------------
-# Figure S2C - Correlation with agricultural land
-#-------------------------------------------------------------
-
-
-c <- 
-  ggplot(data = mp_data, aes(x = Agriculture, y = mp_ml)) +
-  ggtitle("C") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("Microplastics (particles/mL)") +
-  xlab("Proportion of home range in agricultural land") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-#-------------------------------------------------------------
-# Figure S2D - Correlation with water and wetlands
-#-------------------------------------------------------------
-
-
-
-d <- 
-  ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
-  ggtitle("D") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("Microplastics (particles/mL)") +
-  xlab("Proportion of water and wetlands in home range") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-
-#-------------------------------------------------------------
-# Figure S2E - Correlation with mean HFI
-#-------------------------------------------------------------
-
-e <- 
-  ggplot(data = mp_data, aes(x = mean_HFI, y = mp_ml)) +
-  ggtitle("E") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("Microplastics (particles/mL)") +
-  xlab("Mean HFI Exposure") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-
-
-#-------------------------------------------------------------
-# Figure S2F - Correlation with mean HFI
-#-------------------------------------------------------------
-
-f <- 
-  ggplot(data = mp_data, aes(x = mean_dist_waste, y = mp_ml)) +
-  ggtitle("F") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
-  geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
-  ylab("Microplastics (particles/mL)") +
-  xlab("Mean distance to waste management facility (km)") +
-  theme_bw() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
-        axis.text.y = element_text(size=4, family = "sans"),
-        axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
-        axis.ticks.length=unit(0.08, "cm"),
-        axis.ticks = element_line(size = 0.3),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  coord_cartesian(ylim = c(5,170))
-
-#Compile the panels into a single figure
-figure_s3 <-
-  grid.arrange(a,b,c,d,e,f,
-               ncol=2,
-               nrow=3)
-
-
-#Save the figure
-ggsave(figure_s3,
-       width = 4.75, height = 4.5, units = "in",
-       dpi = 600,
-       bg = "transparent",
-       file="figures/supplementary/extended_data_figure_3.png")
 
 
 #---------------------------------------------------------------------
-# Figure S3 - Relationships between mp concentrations and biological variables
+# Figure S2 - Relationships between mp concentrations and biological variables
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
-# Figure S3a - correlation with age in tapirs
+# Figure S2a - correlation with age in tapirs
 
 a <-
   ggplot(data = mp_data[which(mp_data$species == "Tapirus_terrestris"),],
@@ -518,7 +272,7 @@ a <-
 
 
 #---------------------------------------------------------------------
-# Figure S3B-D; differences between sexes
+# Figure S2B-D; differences between sexes
 
 
 #Some processing to get the names in the right order/format
@@ -578,7 +332,7 @@ mid <-
 
 
 #---------------------------------------------------------------------
-# Figure S3E-G; correlations with body weight
+# Figure S2E-G; correlations with body weight
 
 
 #Generate the figure
@@ -634,7 +388,7 @@ bot <-
 
 
 # Assemble and save
-figure_s4 <-
+figure_s2 <-
   grid.arrange(a,mid,bot,
                ncol=1,
                nrow=3,
@@ -642,33 +396,38 @@ figure_s4 <-
 
 
 #Save the figures
-ggsave(figure_s4,
+ggsave(figure_s2,
        width = 4.75, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_4.png")
+       file="figures/supplementary/extended_data_figure_2.png")
 
 
 
 #-------------------------------------------------------------
-# Figure S4 Size distributions of the particles in the blank controls
+# Figure S3 - Relationships between habitat use and microplastic concentrations 
 #-------------------------------------------------------------
+
+#-------------------------------------------------------------
+# Figure S3a - Relationship with home-range size
 
 
 a <- 
-  ggplot() +
+  ggplot(data = mp_data[mp_data$name != "Juliana",], aes(x = hr, y = mp_ml)) +
   ggtitle("A") +
-  geom_histogram(data = control, aes(length, fill = sample),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05) +
-  scale_fill_manual(values = c("#1c7293", "#1b3b6f"), labels = c("Blank control - 1", "Blank control - 2")) +
-  scale_x_log10(expand = c(0,0.02)) +
-  scale_y_continuous(limits = c(0,10), expand = c(0,.1)) +
-  ylab("Number of particles") +
-  xlab(bquote(bold('Particle length '(µm)))) +
-  theme_bw() +
+  geom_smooth(method = "gam",
+              formula = y ~ x,
+              method.args = list(family = tw(link = "log")),
+              col = "black",
+              fill = "grey80",
+              linewidth = 0.2,
+              linetype = "dashed") +
+  geom_point(aes(col = species), size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"),
+                      name = "",
+                      labels = c("Myrmecophaga tridactyla", "Priodontes maximus", "Tapirus terrestris")) +
+  ylab("Microplastics (particles/mL)") +
+  xlab(expression(bold(Home~range~size~(km^2))))+
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -676,34 +435,56 @@ a <-
         axis.title.x = element_text(size=5, family = "sans", face = "bold"),
         axis.text.y = element_text(size=4, family = "sans"),
         axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        legend.text  = element_text(size=5, family = "sans", face = "bold"),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
+        legend.position.inside  = c(0.7,0.95),
+        legend.key.size = unit(0.2, "cm"),
+        legend.key.width = unit(0.2, "cm"),
+        legend.key = element_rect(fill = "transparent", colour = "transparent"),
         legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.1, 'cm'),
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
-        legend.margin = unit(c(0,0,0,0), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE))
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  coord_cartesian(ylim = c(5,170)) +
+  add_phylopic(anteater_pic,
+               x = 28,
+               y = 160,
+               ysize = 12, alpha = 1, fill = "#619b8a") +
+  add_phylopic(armadillo_pic,
+               x = 24,
+               y = 160,
+               ysize = 12, alpha = 1, fill = "#bb3e03") +
+  add_phylopic(tapir_pic,
+               x = 20,
+               y = 160,
+               ysize = 12, alpha = 1, fill = "#005f73",
+               horizontal = TRUE)
+
+
+
+
+
+#-------------------------------------------------------------
+# Figure S3B - Relationship with diffusion rate
 
 
 b <- 
-  ggplot() +
+  ggplot(data = mp_data, aes(x = diffusion, y = mp_ml)) +
   ggtitle("B") +
-  geom_histogram(data = control, aes(width, fill = sample),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05) +
-  scale_fill_manual(values = c("#1c7293", "#1b3b6f"), labels = c("Blank control - 1", "Blank control - 2")) +
-  scale_x_log10(expand = c(0,0.02)) +
-  scale_y_continuous(limits = c(0,10), expand = c(0,.1)) +
-  ylab("Number of particles") +
-  xlab(bquote(bold('Particle width '(µm)))) +
-  theme_bw() +
+  geom_smooth(method = "gam",
+              formula = y ~ x,
+              method.args = list(family = tw(link = "log")),
+              col = "black",
+              fill = "grey80",
+              size = 0.2,
+              linetype = "dashed") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("Microplastics (particles/mL)") +
+  xlab(expression(bold(Diffusion~rate~(m^2~sec^-1))))+
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -711,46 +492,34 @@ b <-
         axis.title.x = element_text(size=5, family = "sans", face = "bold"),
         axis.text.y = element_text(size=4, family = "sans"),
         axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        legend.text  = element_text(size=5, family = "sans", face = "bold"),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
+        legend.key.size = unit(0.2, "cm"),
+        legend.key.width = unit(0.2, "cm"),
+        legend.key = element_rect(fill = "transparent", colour = "transparent"),
         legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.2, 'cm'),
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
-        legend.margin = unit(c(0,0,0,0), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE))
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
+#-------------------------------------------------------------
+# Figure S3C - Correlation with agricultural land
+#-------------------------------------------------------------
 
 
-C <- 
-  ggplot() +
+c <- 
+  ggplot(data = mp_data, aes(x = Agriculture, y = mp_ml)) +
   ggtitle("C") +
-    geom_histogram(data = sizes, aes(x = Length,
-                                     y = after_stat(count / sum(count)),
-                                     fill = "blood"),
-                   alpha = 0.8,
-                   bins = 60,
-                   col = "black",
-                   linewidth = 0.05)+
-    geom_histogram(data = control, aes(x = length,
-                                       y = after_stat(count / sum(count)),
-                                       fill = "control"),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05)+
-
-  scale_fill_manual(values = c("#83c5be", "#e29578"), labels = c("Blood samples", "Blank controls")) +
-  scale_x_log10(expand = c(0,0.02)) +
-  scale_y_continuous(limits = c(0,.11), expand = c(0,0)) +
-  ylab("Microplastic particle frequency") +
-  xlab(bquote(bold('Particle length '(µm)))) +
-  theme_bw() +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("Microplastics (particles/mL)") +
+  xlab("Proportion of home range in agricultural land") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -758,45 +527,30 @@ C <-
         axis.title.x = element_text(size=5, family = "sans", face = "bold"),
         axis.text.y = element_text(size=4, family = "sans"),
         axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
-        legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.1, 'cm'),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
-        legend.margin = unit(c(0,0,0,0), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE))
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  coord_cartesian(ylim = c(5,170))
+
+
+#-------------------------------------------------------------
+# Figure S3D - Correlation with water and wetlands
+#-------------------------------------------------------------
 
 
 
-D <- 
-  ggplot() +
+d <- 
+  ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
   ggtitle("D") +
-  geom_histogram(data = sizes, aes(x = Width,
-                                   y = after_stat(count / sum(count)),
-                                   fill = "blood"),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05)+
-  geom_histogram(data = control, aes(x = width,
-                                     y = after_stat(count / sum(count)),
-                                     fill = "control"),
-                 alpha = 0.8,
-                 bins = 60,
-                 col = "black",
-                 linewidth = 0.05)+
-  
-  scale_fill_manual(values = c("#83c5be", "#e29578"), labels = c("Blood samples", "Blank controls")) +
-  scale_x_log10(expand = c(0,0.02)) +
-  scale_y_continuous(limits = c(0,.11), expand = c(0,0)) +
-  ylab("Microplastic particle frequency") +
-  xlab(bquote(bold('Particle width '(µm)))) +
-  theme_bw() +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("Microplastics (particles/mL)") +
+  xlab("Proportion of water and wetlands in home range") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -804,169 +558,88 @@ D <-
         axis.title.x = element_text(size=5, family = "sans", face = "bold"),
         axis.text.y = element_text(size=4, family = "sans"),
         axis.text.x  = element_text(size=4, family = "sans"),
-        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
-        legend.position = "top",
-        legend.title = element_blank(),
-        legend.text = element_text(size=5, family = "sans", face = "bold"),
-        legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.1, 'cm'),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
-        legend.margin = unit(c(0,0,0,0), "cm")) +
-  guides(fill = guide_legend(byrow = TRUE))
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
-# Heatmap of the polymer counts in the blank controls
-E <- 
-  ggplot(control_polymers, aes(polymer, sample, fill= count)) + 
+
+
+#-------------------------------------------------------------
+# Figure S3E - Correlation with mean HFI
+#-------------------------------------------------------------
+
+e <- 
+  ggplot(data = mp_data, aes(x = mean_HFI, y = mp_ml)) +
   ggtitle("E") +
-  geom_tile(alpha = 0.95) +
-  scico::scale_fill_scico(palette = "lipari",
-                          name = "Particles") +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("Microplastics (particles/mL)") +
+  xlab("Mean HFI Exposure") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        axis.title.y = element_blank(),
-        axis.title.x = element_blank(),
-        axis.text.y = element_blank(),
-        axis.text.x  = element_text(size=4,
-                                    family = "sans",
-                                    angle = 90,
-                                    face = "bold",
-                                    color = "black",
-                                    hjust = 1, vjust = 0.5),
-        axis.ticks.y = element_blank(),
-        axis.ticks.x = element_blank(),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
-        legend.position = "top",
-        legend.title = element_text(size=5, family = "sans", face = "bold", vjust = -2, hjust = 0.5),
-        legend.text = element_text(size=4, family = "sans", face = "bold", vjust = 4),
-        legend.background = element_rect(fill = "transparent"),
-        legend.key.size = unit(0.2, 'cm'),
-        legend.spacing.y = unit(0.1, 'cm'),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
+        legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
-  scale_y_discrete(expand = c(0, 0)) +
-  scale_x_discrete(expand = c(0, 0)) +
-  guides(fill = guide_colorbar(title.position = "top", ticks.colour = NA, barwidth = 10,
-                               barheight = 0.3, direction = "horizontal"))
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  coord_cartesian(ylim = c(5,170))
 
 
 
-
-
-
-mean_polymers_blood <- aggregate(concentration ~ polymer,
-                           FUN = "mean", data = mp_data_long)
+#-------------------------------------------------------------
+# Figure S3F - Correlation with mean HFI
+#-------------------------------------------------------------
 
 f <- 
-  ggplot(mean_polymers_blood,
-         aes(x = polymer, y = concentration)) +
+  ggplot(data = mp_data, aes(x = mean_dist_waste, y = mp_ml)) +
   ggtitle("F") +
-  geom_segment(data = data.frame(polymer = unique(mean_polymers_blood$polymer)),
-               aes(x = polymer, xend = polymer, y = -8, yend = 30),
-               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
-  geom_col(width = 0.85, show.legend = FALSE, fill = "#83c5be") +
-  scale_y_continuous(limits = c(-8, 33),
-                     breaks = c(0, 10, 20, 30, 40),
-                     expand = c(0, 0)) +
-  coord_polar(theta = "x", start = pi / 1) +
-  labs(x = NULL, y = NULL) +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
+  geom_point(aes(col = species),size = 0.4) +
+  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  ylab("Microplastics (particles/mL)") +
+  xlab("Mean distance to waste management facility (km)") +
   theme_bw() +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85", NA), linewidth = 0.2),
+  theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
         axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
-        axis.text.y = element_blank(),
-        axis.text.x = element_text(size=3, family = "sans", face = "bold", color = "black"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
-        axis.ticks = element_blank(),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -2),
+        axis.ticks.length=unit(0.08, "cm"),
+        axis.ticks = element_line(size = 0.3),
         legend.position = "none",
         panel.background = element_rect(fill = "transparent"),
         plot.background = element_rect(fill = "transparent", color = NA),
         plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  ggplot2::annotate("text",
-                    x = pi*2.2,
-                    y = c(10, 20, 30, 40),
-                    label = c("10", "20", "30", "40"),
-                    color = "black",
-                    family = "sans",
-                    size = 1)
+  coord_cartesian(ylim = c(5,170))
 
-
-
-mean_polymers_control <- aggregate(count ~ polymer,
-                                 FUN = "mean", data = control_polymers)
-
-G <- 
-  ggplot(mean_polymers_control,
-         aes(x = polymer, y = count)) +
-  ggtitle("G") +
-  geom_segment(data = data.frame(polymer = unique(mean_polymers_control$polymer)),
-               aes(x = polymer, xend = polymer, y = -8, yend = 30),
-               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
-  geom_col(width = 0.85, show.legend = FALSE, fill = "#e29578") +
-  scale_y_continuous(limits = c(-8, 33),
-                     breaks = c(0, 10, 20, 30, 40),
-                     expand = c(0, 0)) +
-  coord_polar(theta = "x", start = pi / 1) +
-  labs(x = NULL, y = NULL) +
-  theme_bw() +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85", NA), linewidth = 0.2),
-        panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
-        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
-        axis.text.y = element_blank(),
-        axis.text.x = element_text(size=3, family = "sans", face = "bold", color = "black"),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
-        axis.ticks = element_blank(),
-        legend.position = "none",
-        panel.background = element_rect(fill = "transparent"),
-        plot.background = element_rect(fill = "transparent", color = NA),
-        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
-  ggplot2::annotate("text",
-                    x = pi*2.2,
-                    y = c(10, 20, 30, 40),
-                    label = c("10", "20", "30", "40"),
-                    color = "black",
-                    family = "sans",
-                    size = 1)
-
-
-TOP <-
-  grid.arrange(a,b,
+#Compile the panels into a single figure
+figure_s3 <-
+  grid.arrange(a,b,c,d,e,f,
                ncol=2,
-               nrow=1)
-
-MID <-
-  grid.arrange(C,D,
-               ncol=2,
-               nrow=1)
-
-BOT <-
-  grid.arrange(f,G,
-               ncol=2,
-               nrow=1)
+               nrow=3)
 
 
-FIG <-
-  grid.arrange(TOP,MID,E,BOT,
-               ncol=1,
-               nrow=4)
-
-
-#Save the figures
-ggsave(FIG,
-       width = 4.75, height = 1.8*4, units = "in",
+#Save the figure
+ggsave(figure_s3,
+       width = 4.75, height = 4.5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_5.png")
+       file="figures/supplementary/extended_data_figure_3.png")
 
 
 
@@ -984,7 +657,7 @@ nReps <- 100
 
 
 # First subset to just the Cerrado data
-Cerrado <- polymers[(polymers$biome == "Cerrado"),4:16]
+Cerrado <- mp_data[(mp_data$biome == "Cerrado"),polymers]
 
 #empty list for storing results
 RES <- list()
@@ -1150,7 +823,7 @@ TOP <-
 # Rarefaction curves for the Pantanal
 
 # First subset to just the Pantanal data
-Pantanal <- polymers[(polymers$biome == "Pantanal"),4:16]
+Pantanal <- mp_data[(mp_data$biome == "Pantanal"),polymers]
 
 #empty list for storing results
 RES <- list()
@@ -1318,7 +991,7 @@ MID <-
 # Rarefaction curves for the Amazon
 
 # First subset to just the Amazon data
-Amazon <- polymers[(polymers$biome == "Amazon"),4:16]
+Amazon <- mp_data[(mp_data$biome == "Amazon"),polymers]
 
 #empty list for storing results
 RES <- list()
@@ -1491,4 +1164,324 @@ ggsave(FIG,
        width = 4.75, height = 4.5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_6.png")
+       file="figures/supplementary/extended_data_figure_5.png")
+
+
+
+#-------------------------------------------------------------
+# Figure S7 Size distributions of the particles in the blank controls
+#-------------------------------------------------------------
+
+
+a <- 
+  ggplot() +
+  ggtitle("A") +
+  geom_histogram(data = control, aes(length, fill = sample),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05) +
+  scale_fill_manual(values = c("#1c7293", "#1b3b6f"), labels = c("Blank control - 1", "Blank control - 2")) +
+  scale_x_log10(expand = c(0,0.02)) +
+  scale_y_continuous(limits = c(0,10), expand = c(0,.1)) +
+  ylab("Number of particles") +
+  xlab(bquote(bold('Particle length '(µm)))) +
+  theme_bw() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key.size = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.1, 'cm'),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
+        legend.margin = unit(c(0,0,0,0), "cm")) +
+  guides(fill = guide_legend(byrow = TRUE))
+
+
+b <- 
+  ggplot() +
+  ggtitle("B") +
+  geom_histogram(data = control, aes(width, fill = sample),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05) +
+  scale_fill_manual(values = c("#1c7293", "#1b3b6f"), labels = c("Blank control - 1", "Blank control - 2")) +
+  scale_x_log10(expand = c(0,0.02)) +
+  scale_y_continuous(limits = c(0,10), expand = c(0,.1)) +
+  ylab("Number of particles") +
+  xlab(bquote(bold('Particle width '(µm)))) +
+  theme_bw() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key.size = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.2, 'cm'),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
+        legend.margin = unit(c(0,0,0,0), "cm")) +
+  guides(fill = guide_legend(byrow = TRUE))
+
+
+
+
+C <- 
+  ggplot() +
+  ggtitle("C") +
+  geom_histogram(data = sizes, aes(x = Length,
+                                   y = after_stat(count / sum(count)),
+                                   fill = "blood"),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05)+
+  geom_histogram(data = control, aes(x = length,
+                                     y = after_stat(count / sum(count)),
+                                     fill = "control"),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05)+
+  
+  scale_fill_manual(values = c("#83c5be", "#e29578"), labels = c("Blood samples", "Blank controls")) +
+  scale_x_log10(expand = c(0,0.02)) +
+  scale_y_continuous(limits = c(0,.11), expand = c(0,0)) +
+  ylab("Microplastic particle frequency") +
+  xlab(bquote(bold('Particle length '(µm)))) +
+  theme_bw() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key.size = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.1, 'cm'),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
+        legend.margin = unit(c(0,0,0,0), "cm")) +
+  guides(fill = guide_legend(byrow = TRUE))
+
+
+
+D <- 
+  ggplot() +
+  ggtitle("D") +
+  geom_histogram(data = sizes, aes(x = Width,
+                                   y = after_stat(count / sum(count)),
+                                   fill = "blood"),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05)+
+  geom_histogram(data = control, aes(x = width,
+                                     y = after_stat(count / sum(count)),
+                                     fill = "control"),
+                 alpha = 0.8,
+                 bins = 60,
+                 col = "black",
+                 linewidth = 0.05)+
+  
+  scale_fill_manual(values = c("#83c5be", "#e29578"), labels = c("Blood samples", "Blank controls")) +
+  scale_x_log10(expand = c(0,0.02)) +
+  scale_y_continuous(limits = c(0,.11), expand = c(0,0)) +
+  ylab("Microplastic particle frequency") +
+  xlab(bquote(bold('Particle width '(µm)))) +
+  theme_bw() +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=5, family = "sans", face = "bold"),
+        axis.text.y = element_text(size=4, family = "sans"),
+        axis.text.x  = element_text(size=4, family = "sans"),
+        plot.title = element_text(hjust = -0.05, vjust = -6, size = 6, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size=5, family = "sans", face = "bold"),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key.size = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.1, 'cm'),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm"),
+        legend.margin = unit(c(0,0,0,0), "cm")) +
+  guides(fill = guide_legend(byrow = TRUE))
+
+# Heatmap of the polymer counts in the blank controls
+E <- 
+  ggplot(control_polymers, aes(polymer, sample, fill= count)) + 
+  ggtitle("E") +
+  geom_tile(alpha = 0.95) +
+  scico::scale_fill_scico(palette = "lipari",
+                          name = "Particles") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x  = element_text(size=4,
+                                    family = "sans",
+                                    angle = 90,
+                                    face = "bold",
+                                    color = "black",
+                                    hjust = 1, vjust = 0.5),
+        axis.ticks.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+        legend.position = "top",
+        legend.title = element_text(size=5, family = "sans", face = "bold", vjust = -2, hjust = 0.5),
+        legend.text = element_text(size=4, family = "sans", face = "bold", vjust = 4),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key.size = unit(0.2, 'cm'),
+        legend.spacing.y = unit(0.1, 'cm'),
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0.2,0.1,0.2,0.2), "cm")) +
+  scale_y_discrete(expand = c(0, 0)) +
+  scale_x_discrete(expand = c(0, 0)) +
+  guides(fill = guide_colorbar(title.position = "top", ticks.colour = NA, barwidth = 10,
+                               barheight = 0.3, direction = "horizontal"))
+
+
+
+
+
+
+mean_polymers_blood <- aggregate(concentration ~ polymer,
+                                 FUN = "mean", data = mp_data_long)
+
+f <- 
+  ggplot(mean_polymers_blood,
+         aes(x = polymer, y = concentration)) +
+  ggtitle("F") +
+  geom_segment(data = data.frame(polymer = unique(mean_polymers_blood$polymer)),
+               aes(x = polymer, xend = polymer, y = -8, yend = 30),
+               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#83c5be") +
+  scale_y_continuous(limits = c(-8, 33),
+                     breaks = c(0, 10, 20, 30, 40),
+                     expand = c(0, 0)) +
+  coord_polar(theta = "x", start = pi / 1) +
+  labs(x = NULL, y = NULL) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85", NA), linewidth = 0.2),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=3, family = "sans", face = "bold", color = "black"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  ggplot2::annotate("text",
+                    x = pi*2.2,
+                    y = c(10, 20, 30, 40),
+                    label = c("10", "20", "30", "40"),
+                    color = "black",
+                    family = "sans",
+                    size = 1)
+
+
+
+mean_polymers_control <- aggregate(count ~ polymer,
+                                   FUN = "mean", data = control_polymers)
+
+G <- 
+  ggplot(mean_polymers_control,
+         aes(x = polymer, y = count)) +
+  ggtitle("G") +
+  geom_segment(data = data.frame(polymer = unique(mean_polymers_control$polymer)),
+               aes(x = polymer, xend = polymer, y = -8, yend = 30),
+               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#e29578") +
+  scale_y_continuous(limits = c(-8, 33),
+                     breaks = c(0, 10, 20, 30, 40),
+                     expand = c(0, 0)) +
+  coord_polar(theta = "x", start = pi / 1) +
+  labs(x = NULL, y = NULL) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85", NA), linewidth = 0.2),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=3, family = "sans", face = "bold", color = "black"),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
+  ggplot2::annotate("text",
+                    x = pi*2.2,
+                    y = c(10, 20, 30, 40),
+                    label = c("10", "20", "30", "40"),
+                    color = "black",
+                    family = "sans",
+                    size = 1)
+
+
+TOP <-
+  grid.arrange(a,b,
+               ncol=2,
+               nrow=1)
+
+MID <-
+  grid.arrange(C,D,
+               ncol=2,
+               nrow=1)
+
+BOT <-
+  grid.arrange(f,G,
+               ncol=2,
+               nrow=1)
+
+
+FIG <-
+  grid.arrange(TOP,MID,E,BOT,
+               ncol=1,
+               nrow=4)
+
+
+#Save the figures
+ggsave(FIG,
+       width = 4.75, height = 1.8*4, units = "in",
+       dpi = 600,
+       bg = "transparent",
+       file="figures/supplementary/extended_data_figure_7.png")

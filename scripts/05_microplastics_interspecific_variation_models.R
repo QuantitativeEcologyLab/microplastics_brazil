@@ -35,8 +35,8 @@ exp(preds$fit[1] + 1.96*preds$se.fit[1])
 
 #Estimate the mean concentration and 95%CIs in giant anteaters
 anteater_mean <- gam(mp_ml ~ 1,
-                  family = tw(link = "log"),
-                  data = mp_data[mp_data$species == "Myrmecophaga_tridactyla",])
+                     family = tw(link = "log"),
+                     data = mp_data[mp_data$species == "Myrmecophaga_tridactyla",])
 preds <- predict(anteater_mean, se.fit = TRUE)
 exp(preds$fit[1])
 exp(preds$fit[1] - 1.96*preds$se.fit[1])
@@ -45,8 +45,8 @@ exp(preds$fit[1] + 1.96*preds$se.fit[1])
 
 #Estimate the mean concentration and 95%CIs in giant armadillos
 armadillo_mean <- gam(mp_ml ~ 1,
-                     family = tw(link = "log"),
-                     data = mp_data[mp_data$species == "Priodontes_maximus",])
+                      family = tw(link = "log"),
+                      data = mp_data[mp_data$species == "Priodontes_maximus",])
 preds <- predict(armadillo_mean, se.fit = TRUE)
 exp(preds$fit[1])
 exp(preds$fit[1] - 1.96*preds$se.fit[1])
@@ -91,13 +91,13 @@ for(i in 1:length(all_pairs)){
     
     #Assemble the results into a data frame
     res[[j]] <- data.frame(pair = paste(all_pairs[[i]][1], all_pairs[[i]][2]),
-                              species1 = all_pairs[[i]][1],
-                              species2 = all_pairs[[i]][2],
-                              polymer = polymer_names[j],
-                              coef_spp = sub("species","",names(summary(fit)$p.coeff[2])),
-                              beta = unname(summary(fit)$p.coeff[2]),
-                              t = unname(summary(fit)$p.t[2]),
-                              p = unname(summary(fit)$p.pv[2]))
+                           species1 = all_pairs[[i]][1],
+                           species2 = all_pairs[[i]][2],
+                           polymer = polymer_names[j],
+                           coef_spp = sub("species","",names(summary(fit)$p.coeff[2])),
+                           beta = unname(summary(fit)$p.coeff[2]),
+                           t = unname(summary(fit)$p.t[2]),
+                           p = unname(summary(fit)$p.pv[2]))
     
   } #closes the loop over the polymer names
   
