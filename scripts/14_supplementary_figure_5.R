@@ -1,7 +1,7 @@
-# This script generates figure 3 in the main text that
-# visualises differences in polymer concentrations between the three biomes
-# Note: the indiviudal panels are generated in this script
-# but need to be assembled outside of R
+# This script generates supplementary figure 5 that
+# visualises differences in polymer concentrations between the three study regions
+# Note: the individual panels are generated in this script
+# but additional labeling was done outside of R
 
 # Written by Michael Noonan
 
@@ -14,7 +14,7 @@ source("scripts/04_microplastics_data_import.R")
 
 
 #---------------------------------------------------------------------
-# Figure S4A - heatmap of polymer abundances
+# Figure S5A - heatmap of polymer abundances
 #---------------------------------------------------------------------
 
 
@@ -65,7 +65,7 @@ A <-
 
 
 #---------------------------------------------------------------------
-# Figure S4B -D - Radar barplots of polymer abundances in each study site
+# Figure S5B -D - Radar barplots of polymer abundances in each study site
 #---------------------------------------------------------------------
 
 
@@ -200,4 +200,4 @@ ggsave(FIG,
        width = 2.375*2, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_4.png")
+       file="figures/supplementary/extended_data_figure_5.png")

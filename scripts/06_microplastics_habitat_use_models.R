@@ -14,6 +14,9 @@ source("scripts/04_microplastics_data_import.R")
 #Drop any individuals without movement data
 mp_data <- mp_data[!is.na(mp_data$hr),]
 
+#Exclude the giant armadillos for the main text analyses
+mp_data <- mp_data[mp_data$species != "Priodontes_maximus",]
+
 #-------------------------------------------------------------
 # Relationship with home-range size
 #-------------------------------------------------------------

@@ -124,8 +124,8 @@ Scripts should be run in the following order. Scripts 05 onward require scripts 
 | `10_sensitivity_analyses.R` | Sensitivity analyses including species-specific models and influential point diagnostics |
 | `11_figure_1.R` | Generates Figure 1 |
 | `12_figure_2.R` | Generates Figure 2 |
-| `13_supplementary_figures.R` | Generates supplementary figures |
-| `14_supplementary_figure_4.R` | Generates supplementary figure 4 |
+| `13_supplementary_figures.R` | Generates supplementary figures 1-3, 6, and 8 |
+| `14_supplementary_figure_5.R` | Generates supplementary figure 5 |
 
 ## Citation
 
