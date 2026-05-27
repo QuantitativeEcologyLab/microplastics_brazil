@@ -127,6 +127,8 @@ Scripts should be run in the following order. Scripts 05 onward require scripts 
 | `13_supplementary_figures.R` | Generates supplementary figures 1-3, 6, and 8 |
 | `14_supplementary_figure_5.R` | Generates supplementary figure 5 |
 
+No non-standard hardware is required. All scripts were developed and tested on macOS using R version 4.3.3. Note that the movement modelling scripts (01_1 through 01_3) are computationally intensive and may take several hours to run on a standard desktop computer; all model outputs are provided in the results folder so these scripts do not need to be rerun to reproduce the manuscript analyses and figures.
+
 ## Citation
 
 Ferraz et al. (in revision). Human disturbance drives microplastic abundance in terrestrial wildlife.
