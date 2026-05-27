@@ -10,6 +10,9 @@ library(mgcv)
 #Import the MP datasets
 source("scripts/04_microplastics_data_import.R")
 
+#Exclude the giant armadillos for the main text analyses
+mp_data <- mp_data[mp_data$species != "Priodontes_maximus",]
+
 #-------------------------------------------------------------
 # Differences in microplastic concentrations between species
 #-------------------------------------------------------------

@@ -15,6 +15,8 @@ library(gridExtra)
 #Import the MP datasets
 source("scripts/04_microplastics_data_import.R")
 
+#Exclude the giant armadillos for the main text analyses
+mp_data <- mp_data[mp_data$species != "Priodontes_maximus",]
 
 #Get the animal silhouettes from the phylopic package
 tapir_pic <- get_phylopic("7950e979-6738-45b3-a7c6-c573ef5559d1")
@@ -105,10 +107,10 @@ b <-
               method.args = list(family = tw(link = "log")),
               col = "black",
               fill = "grey80",
-              size = 0.2,
+              linewidth = 0.2,
               linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  scale_colour_manual(values = c("#619b8a", "#005f73"), name = "") +
   ylab("Microplastics (particles/mL)") +
   xlab("Maximum HFI exposure") +
   theme_bw() +
@@ -134,9 +136,9 @@ b <-
 c <- 
   ggplot(data = mp_data, aes(x = mean_dist_development, y = mp_ml)) +
   ggtitle("C") +
-  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
+  geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", linewidth = 0.2, linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
-  scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
+  scale_colour_manual(values = c("#619b8a", "#005f73"), name = "") +
   ylab("Microplastics (particles/mL)") +
   xlab("Mean distance to development (km)") +
   theme_bw() +
@@ -154,16 +156,16 @@ c <-
         plot.background = element_rect(fill = "transparent", color = NA),
         plot.margin = unit(c(0,0.1,0,0.1), "cm")) +
   coord_cartesian(ylim = c(5,170)) +
-  add_phylopic(armadillo_pic,
-               x = 50,
-               y = 160,
-               height = 16, alpha = 1, fill = "#bb3e03") +
+  # add_phylopic(armadillo_pic,
+  #              x = 50,
+  #              y = 160,
+  #              height = 16, alpha = 1, fill = "#bb3e03") +
   add_phylopic(anteater_pic,
-               x = 60,
+               x = 55,
                y = 160,
                height = 16, alpha = 1, fill = "#619b8a") +
   add_phylopic(tapir_pic,
-               x = 70,
+               x = 65,
                y = 160,
                height = 16, alpha = 1, fill = "#005f73",
                horizontal = TRUE)

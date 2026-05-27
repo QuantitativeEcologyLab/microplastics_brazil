@@ -1,7 +1,5 @@
-# This script generates the 5 supplementary figures associated with 
+# This script generates the supplementary figures associated with 
 # the paper entitled "Human disturbance drives microplastic abundance in terrestrial wildlife"
-
-#Note: Post processing was done to fig S3 to include animal silhouttes 
 
 # Written by Michael Noonan
 
@@ -646,7 +644,7 @@ ggsave(figure_s3,
 
 
 #---------------------------------------------------------------------
-# Figure S5 Rarefaction curves on polymer abundances
+# Figure S6 Rarefaction curves on polymer abundances
 #---------------------------------------------------------------------
 
 
@@ -1164,12 +1162,12 @@ ggsave(FIG,
        width = 4.75, height = 4.5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_5.png")
+       file="figures/supplementary/extended_data_figure_6.png")
 
 
 
 #-------------------------------------------------------------
-# Figure S7 Size distributions of the particles in the blank controls
+# Figure S8 Size distributions of the particles in the blank controls
 #-------------------------------------------------------------
 
 
@@ -1484,4 +1482,4 @@ ggsave(FIG,
        width = 4.75, height = 1.8*4, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_7.png")
+       file="figures/supplementary/extended_data_figure_8.png")

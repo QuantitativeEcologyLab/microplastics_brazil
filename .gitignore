@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 
 data/gps_data
 data/environmental_data
+.positai
