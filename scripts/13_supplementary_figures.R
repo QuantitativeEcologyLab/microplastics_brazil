@@ -1,5 +1,5 @@
 # This script generates the supplementary figures associated with 
-# the paper entitled "Human disturbance drives microplastic abundance in terrestrial wildlife"
+# the paper entitled "Human land use drives microplastic abundance in terrestrial wildlife"
 
 # Written by Michael Noonan
 
@@ -22,7 +22,127 @@ armadillo_pic <- get_phylopic("5d59b5ce-c1dd-40f6-b295-8d2629b9775e")
 #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
-# Figure S1a - Barplot of polymer abundances
+# Figure S1a - c - Radar barplots of polymer abundances across species
+#---------------------------------------------------------------------
+
+
+mean_polymers <- aggregate(concentration ~ species + polymer,
+                           FUN = "mean", data = mp_data_long)
+
+
+a <- 
+  ggplot(mean_polymers[mean_polymers$species == "Tapirus_terrestris",],
+         aes(x = polymer, y = concentration)) +
+  ggtitle("a") +
+  geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
+               aes(x = polymer, xend = polymer, y = -8, yend = 40),
+               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#005f73") +
+  scale_y_continuous(limits = c(-8, 43),
+                     breaks = c(0, 10, 20, 30, 40),
+                     expand = c(0, 0)) +
+  coord_polar(theta = "x", start = pi / 1, clip = "off") +
+  labs(x = NULL, y = NULL) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85","grey85", NA), linewidth = 0.2),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=2.5, family = "sans", face = "bold", color = "black", margin = margin(t = -10)),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0,0.2,0,0.2), "cm")) +
+  ggplot2::annotate("text",
+                    x = pi*2.2,
+                    y = c(10, 20, 30, 40),
+                    label = c("10", "20", "30", "40"),
+                    color = "black",
+                    family = "sans",
+                    size = 1)
+
+b <- 
+  ggplot(mean_polymers[mean_polymers$species == "Myrmecophaga_tridactyla",],
+         aes(x = polymer, y = concentration)) +
+  ggtitle("b") +
+  geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
+               aes(x = polymer, xend = polymer, y = -8, yend = 40),
+               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#619b8a") +
+  scale_y_continuous(limits = c(-8, 43),
+                     breaks = c(0, 10, 20, 30, 40),
+                     expand = c(0, 0)) +
+  coord_polar(theta = "x", start = pi / 1, clip = "off") +
+  labs(x = NULL, y = NULL) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85","grey85", NA), linewidth = 0.2),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=2.5, family = "sans", face = "bold", color = "black", margin = margin(t = -10)),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0,0.2,0,0.2), "cm")) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#619b8a") +
+  ggplot2::annotate("text",
+                    x = pi*2.2,
+                    y = c(10, 20, 30, 40),
+                    label = c("10", "20", "30", "40"),
+                    color = "black",
+                    family = "sans",
+                    size = 1)
+
+
+c <- 
+  ggplot(mean_polymers[mean_polymers$species == "Priodontes_maximus",],
+         aes(x = polymer, y = concentration)) +
+  ggtitle("c") +
+  geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
+               aes(x = polymer, xend = polymer, y = -8, yend = 40),
+               color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#bb3e03") +
+  scale_y_continuous(limits = c(-8, 43),
+                     breaks = c(0, 10, 20, 30, 40),
+                     expand = c(0, 0)) +
+  coord_polar(theta = "x", start = pi / 1, clip = "off") +
+  labs(x = NULL, y = NULL) +
+  theme_bw() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_line(color = c("grey85", "grey85", "grey85","grey85","grey85", NA), linewidth = 0.2),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.title.y = element_text(size=5, family = "sans", face = "bold"),
+        axis.title.x = element_text(size=3, family = "sans", face = "bold"),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size=2.5, family = "sans", face = "bold", color = "black", margin = margin(t = -10)),
+        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold", vjust = -6),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        plot.margin = unit(c(0,0.2,0,0.2), "cm")) +
+  geom_col(width = 0.85, show.legend = FALSE, fill = "#bb3e03") +
+  ggplot2::annotate("text",
+                    x = pi*2.2,
+                    y = c(10, 20, 30, 40),
+                    label = c("10", "20", "30", "40"),
+                    color = "black",
+                    family = "sans",
+                    size = 1)
+
+#---------------------------------------------------------------------
+# Figure S1d - Barplot of polymer abundances
 
 
 # Define the colors for each of the polymers
@@ -49,12 +169,12 @@ ORDER <- mp_data[order(mp_data$species, mp_data$mp_ml), "sample"]
 mp_data_long$sample <- factor(mp_data_long$sample, levels = ORDER, ordered = TRUE)
 
 # Create the bar plot with your custom colors
-top <- 
+d <- 
   ggplot(data = mp_data_long, 
          aes(x = sample,
              y = concentration,
              fill = polymer)) +
-  ggtitle("A") +
+  ggtitle("d") +
   geom_vline(xintercept = 21.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
   geom_vline(xintercept = 24.5, linetype = "dashed", col = "grey70", linewidth = 0.3) +
   geom_bar(stat = "identity", alpha = 0.9) +
@@ -71,8 +191,8 @@ top <-
         axis.title.y = element_blank(),#element_text(size = 5, family = "sans", face = "bold"),
         axis.text.x = element_text(size = 4, family = "sans"),
         axis.text.y = element_blank(),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
-        legend.position = c(0.8, 0.8),
+        plot.title = element_text(hjust = 0, size = 6, family = "sans", face = "bold"),
+        legend.position = c(0.8, 0.75),
         legend.title = element_blank(),
         legend.text = element_text(size = 5, family = "sans", face = "bold"),
         legend.background = element_rect(fill = "transparent", colour = "transparent"),
@@ -106,13 +226,13 @@ top <-
 
 
 #---------------------------------------------------------------------
-# Figure S1B & C - Histograms of size distributions
+# Figure S1e & f - Histograms of size distributions
 
 
 
-b <- 
+e <- 
   ggplot() +
-  ggtitle("B") +
+  ggtitle("e") +
   geom_histogram(data = sizes, aes(Length, fill = species),
                  alpha = 0.8,
                  bins = 60,
@@ -157,9 +277,9 @@ b <-
 
 
 
-c <- 
+f <- 
   ggplot() +
-  ggtitle("C") +
+  ggtitle("f") +
   geom_histogram(data = sizes, aes(Width, fill = species),
                  alpha = 0.8,
                  bins = 50,
@@ -190,29 +310,57 @@ c <-
   guides(fill = guide_legend(byrow = TRUE))
 
 
-
+top <-
+  grid.arrange(a,b,c,
+               ncol=3,
+               nrow=1)
 
 bot <-
-  grid.arrange(b,c,
+  grid.arrange(e,f,
                ncol=2,
                nrow=1)
 
 
 FIG <-
-  grid.arrange(top,bot,
+  grid.arrange(top, d, bot,
                ncol=1,
-               nrow=2,
-               heights = c(1.4,.6))
+               nrow=3,
+               heights = c(.6, 1.4,.6))
 
 
 #Save the figures
 ggsave(FIG,
-       width = 4.75, height = 4.5, units = "in",
+       width = 4.75, height = 5.5, units = "in",
        dpi = 600,
        bg = "transparent",
        file="figures/supplementary/extended_data_figure_1.png")
 
+#---------
+#Save the underlying data
+#---------
+write.csv(mean_polymers[mean_polymers$species == "Tapirus_terrestris",],
+          file = "data/figures/figure_s1a.csv",
+          row.names = F)
 
+write.csv(mean_polymers[mean_polymers$species == "Myrmecophaga_tridactyla",],
+          file = "data/figures/figure_s1b.csv",
+          row.names = F)
+
+write.csv(mean_polymers[mean_polymers$species == "Priodontes_maximus",],
+          file = "data/figures/figure_s1c.csv",
+          row.names = F)
+  
+write.csv(mp_data_long[,c("sample","species","polymer","concentration")],
+          file = "data/figures/figure_s1d.csv",
+          row.names = F)
+
+write.csv(sizes[,c("species","Length")],
+          file = "data/figures/figure_s1e.csv",
+          row.names = F)
+
+write.csv(sizes[,c("species","Width")],
+          file = "data/figures/figure_s1f.csv",
+          row.names = F)
 
 
 #---------------------------------------------------------------------
@@ -393,7 +541,7 @@ figure_s2 <-
                heights=c(2,1,1))
 
 
-#Save the figures
+#Save the figure
 ggsave(figure_s2,
        width = 4.75, height = 5, units = "in",
        dpi = 600,
@@ -401,6 +549,36 @@ ggsave(figure_s2,
        file="figures/supplementary/extended_data_figure_2.png")
 
 
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(mp_data[which(mp_data$species == "Tapirus_terrestris"),c("mp_ml","age","sex")]),
+          file = "data/figures/figure_s2a.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Tapirus_terrestris"),c("mp_ml","sex")]),
+          file = "data/figures/figure_s2b.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Priodontes_maximus"),c("mp_ml","sex")]),
+          file = "data/figures/figure_s2c.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Myrmecophaga_tridactyla"),c("mp_ml","sex")]),
+          file = "data/figures/figure_s2d.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Tapirus_terrestris"),c("mp_ml","weight")]),
+          file = "data/figures/figure_s2e.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Priodontes_maximus"),c("mp_ml","weight")]),
+          file = "data/figures/figure_s2f.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[which(mp_data$species == "Myrmecophaga_tridactyla"),c("mp_ml","weight")]),
+          file = "data/figures/figure_s2g.csv",
+          row.names = F)
 
 #-------------------------------------------------------------
 # Figure S3 - Relationships between habitat use and microplastic concentrations 
@@ -412,7 +590,7 @@ ggsave(figure_s2,
 
 a <- 
   ggplot(data = mp_data[mp_data$name != "Juliana",], aes(x = hr, y = mp_ml)) +
-  ggtitle("A") +
+  ggtitle("a") +
   geom_smooth(method = "gam",
               formula = y ~ x,
               method.args = list(family = tw(link = "log")),
@@ -466,12 +644,12 @@ a <-
 
 
 #-------------------------------------------------------------
-# Figure S3B - Relationship with diffusion rate
+# Figure S3b - Relationship with diffusion rate
 
 
 b <- 
   ggplot(data = mp_data, aes(x = diffusion, y = mp_ml)) +
-  ggtitle("B") +
+  ggtitle("b") +
   geom_smooth(method = "gam",
               formula = y ~ x,
               method.args = list(family = tw(link = "log")),
@@ -506,13 +684,13 @@ b <-
 
 
 #-------------------------------------------------------------
-# Figure S3C - Correlation with agricultural land
+# Figure S3c - Correlation with agricultural land
 #-------------------------------------------------------------
 
 
 c <- 
   ggplot(data = mp_data, aes(x = Agriculture, y = mp_ml)) +
-  ggtitle("C") +
+  ggtitle("c") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
@@ -536,14 +714,14 @@ c <-
 
 
 #-------------------------------------------------------------
-# Figure S3D - Correlation with water and wetlands
+# Figure S3d - Correlation with water and wetlands
 #-------------------------------------------------------------
 
 
 
 d <- 
   ggplot(data = mp_data, aes(x = Water, y = mp_ml)) +
-  ggtitle("D") +
+  ggtitle("d") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
@@ -568,17 +746,17 @@ d <-
 
 
 #-------------------------------------------------------------
-# Figure S3E - Correlation with mean HFI
+# Figure S3e - Correlation with mean HFI
 #-------------------------------------------------------------
 
 e <- 
   ggplot(data = mp_data, aes(x = mean_HFI, y = mp_ml)) +
-  ggtitle("E") +
+  ggtitle("e") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "dashed") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
   ylab("Microplastics (particles/mL)") +
-  xlab("Mean HFI Exposure") +
+  xlab("Weighted mean HFI Exposure") +
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -598,12 +776,12 @@ e <-
 
 
 #-------------------------------------------------------------
-# Figure S3F - Correlation with mean HFI
+# Figure S3f - Correlation with mean HFI
 #-------------------------------------------------------------
 
 f <- 
   ggplot(data = mp_data, aes(x = mean_dist_waste, y = mp_ml)) +
-  ggtitle("F") +
+  ggtitle("f") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", size = 0.2, linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#bb3e03", "#005f73"), name = "") +
@@ -641,16 +819,43 @@ ggsave(figure_s3,
 
 
 
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(mp_data[,c("species","mp_ml","hr")]),
+          file = "data/figures/figure_s3a.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","diffusion")]),
+          file = "data/figures/figure_s3b.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","Agriculture")]),
+          file = "data/figures/figure_s3c.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","Water")]),
+          file = "data/figures/figure_s3d.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","mean_HFI")]),
+          file = "data/figures/figure_s3e.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","mean_dist_waste")]),
+          file = "data/figures/figure_s3f.csv",
+          row.names = F)
+
 
 
 #---------------------------------------------------------------------
-# Figure S6 Rarefaction curves on polymer abundances
+# Figure S5 Rarefaction curves on polymer abundances
 #---------------------------------------------------------------------
 
 
 #---------------------------------------------------------------------
 # Rarefaction curves for the Cerrado
-
+set.seed(1)
 nReps <- 100
 
 
@@ -708,7 +913,7 @@ a <-
   geom_line(data = RES, aes(x = n, y = n_polymers_mean), col = "#e9c46a", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = n_polymers_min, ymax = n_polymers_max), alpha = 0.2, fill = "#e9c46a") +
-  ggtitle("A") +
+  ggtitle("a") +
   xlab("Number of samples") +
   ylab ("Number of polymers") +
   theme(panel.grid.major = element_blank(),
@@ -746,7 +951,7 @@ b <-
   geom_line(data = RES, aes(x = n, y = Shannon_mean), col = "#e9c46a", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Shannon_min, ymax = Shannon_max), alpha = 0.2, fill = "#e9c46a") +
-  ggtitle("B") +
+  ggtitle("b") +
   xlab("Number of samples") +
   ylab ("Polymer Shannon Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -783,7 +988,7 @@ c <-
   geom_line(data = RES, aes(x = n, y = Simpson_mean), col = "#e9c46a", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Simpson_min, ymax = Simpson_max), alpha = 0.2, fill = "#e9c46a") +
-  ggtitle("C") +
+  ggtitle("c") +
   xlab("Number of samples") +
   ylab ("Polymer Simpson Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -815,6 +1020,22 @@ TOP <-
   grid.arrange(a,b,c,
                ncol=3,
                nrow=1)
+
+
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(RES[,c("n","n_polymers_mean","n_polymers_sd")]),
+          file = "data/figures/figure_s5a.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Shannon_mean","Shannon_sd")]),
+          file = "data/figures/figure_s5b.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Simpson_mean","Simpson_sd")]),
+          file = "data/figures/figure_s5c.csv",
+          row.names = F)
 
 
 #---------------------------------------------------------------------
@@ -874,7 +1095,7 @@ d <-
   geom_line(data = RES, aes(x = n, y = n_polymers_mean), col = "#0a9396", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = n_polymers_min, ymax = n_polymers_max), alpha = 0.2, fill = "#0a9396") +
-  ggtitle("D") +
+  ggtitle("d") +
   xlab("Number of samples") +
   ylab ("Number of polymers") +
   theme(panel.grid.major = element_blank(),
@@ -912,7 +1133,7 @@ e <-
   geom_line(data = RES, aes(x = n, y = Shannon_mean), col = "#0a9396", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Shannon_min, ymax = Shannon_max), alpha = 0.2, fill = "#0a9396") +
-  ggtitle("E") +
+  ggtitle("e") +
   xlab("Number of samples") +
   ylab ("Polymer Shannon Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -949,7 +1170,7 @@ f <-
   geom_line(data = RES, aes(x = n, y = Simpson_mean), col = "#0a9396", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Simpson_min, ymax = Simpson_max), alpha = 0.2, fill = "#0a9396") +
-  ggtitle("F") +
+  ggtitle("f") +
   xlab("Number of samples") +
   ylab ("Polymer Simpson Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -984,6 +1205,20 @@ MID <-
 
 
 
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(RES[,c("n","n_polymers_mean","n_polymers_sd")]),
+          file = "data/figures/figure_s5d.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Shannon_mean","Shannon_sd")]),
+          file = "data/figures/figure_s5e.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Simpson_mean","Simpson_sd")]),
+          file = "data/figures/figure_s5f.csv",
+          row.names = F)
 
 #---------------------------------------------------------------------
 # Rarefaction curves for the Amazon
@@ -1042,7 +1277,7 @@ g <-
   geom_line(data = RES, aes(x = n, y = n_polymers_mean), col = "#007200", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = n_polymers_min, ymax = n_polymers_max), alpha = 0.2, fill = "#007200") +
-  ggtitle("G") +
+  ggtitle("g") +
   xlab("Number of samples") +
   ylab ("Number of polymers") +
   theme(panel.grid.major = element_blank(),
@@ -1080,7 +1315,7 @@ h <-
   geom_line(data = RES, aes(x = n, y = Shannon_mean), col = "#007200", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Shannon_min, ymax = Shannon_max), alpha = 0.2, fill = "#007200") +
-  ggtitle("H") +
+  ggtitle("h") +
   xlab("Number of samples") +
   ylab ("Polymer Shannon Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -1117,7 +1352,7 @@ i <-
   geom_line(data = RES, aes(x = n, y = Simpson_mean), col = "#007200", size = 0.3) +
   
   geom_ribbon(data = RES, aes(x = n, ymin = Simpson_min, ymax = Simpson_max), alpha = 0.2, fill = "#007200") +
-  ggtitle("I") +
+  ggtitle("i") +
   xlab("Number of samples") +
   ylab ("Polymer Simpson Diversity") +
   theme(panel.grid.major = element_blank(),
@@ -1151,6 +1386,21 @@ BOT <-
                nrow=1)
 
 
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(RES[,c("n","n_polymers_mean","n_polymers_sd")]),
+          file = "data/figures/figure_s5g.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Shannon_mean","Shannon_sd")]),
+          file = "data/figures/figure_s5h.csv",
+          row.names = F)
+
+write.csv(na.omit(RES[,c("n","Simpson_mean","Simpson_sd")]),
+          file = "data/figures/figure_s5i.csv",
+          row.names = F)
+
 
 FIG <-
   grid.arrange(TOP,MID,BOT,
@@ -1162,18 +1412,18 @@ ggsave(FIG,
        width = 4.75, height = 4.5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_6.png")
+       file="figures/supplementary/extended_data_figure_5.png")
 
 
 
 #-------------------------------------------------------------
-# Figure S8 Size distributions of the particles in the blank controls
+# Figure S7 Size distributions of the particles in the blank controls
 #-------------------------------------------------------------
 
 
 a <- 
   ggplot() +
-  ggtitle("A") +
+  ggtitle("a") +
   geom_histogram(data = control, aes(length, fill = sample),
                  alpha = 0.8,
                  bins = 60,
@@ -1208,7 +1458,7 @@ a <-
 
 b <- 
   ggplot() +
-  ggtitle("B") +
+  ggtitle("b") +
   geom_histogram(data = control, aes(width, fill = sample),
                  alpha = 0.8,
                  bins = 60,
@@ -1245,7 +1495,7 @@ b <-
 
 C <- 
   ggplot() +
-  ggtitle("C") +
+  ggtitle("c") +
   geom_histogram(data = sizes, aes(x = Length,
                                    y = after_stat(count / sum(count)),
                                    fill = "blood"),
@@ -1259,7 +1509,7 @@ C <-
                  alpha = 0.8,
                  bins = 60,
                  col = "black",
-                 linewidth = 0.05)+
+                 linewidth = 0.05) +
   
   scale_fill_manual(values = c("#83c5be", "#e29578"), labels = c("Blood samples", "Blank controls")) +
   scale_x_log10(expand = c(0,0.02)) +
@@ -1291,7 +1541,7 @@ C <-
 
 D <- 
   ggplot() +
-  ggtitle("D") +
+  ggtitle("d") +
   geom_histogram(data = sizes, aes(x = Width,
                                    y = after_stat(count / sum(count)),
                                    fill = "blood"),
@@ -1336,7 +1586,7 @@ D <-
 # Heatmap of the polymer counts in the blank controls
 E <- 
   ggplot(control_polymers, aes(polymer, sample, fill= count)) + 
-  ggtitle("E") +
+  ggtitle("e") +
   geom_tile(alpha = 0.95) +
   scico::scale_fill_scico(palette = "lipari",
                           name = "Particles") +
@@ -1380,7 +1630,7 @@ mean_polymers_blood <- aggregate(concentration ~ polymer,
 f <- 
   ggplot(mean_polymers_blood,
          aes(x = polymer, y = concentration)) +
-  ggtitle("F") +
+  ggtitle("f") +
   geom_segment(data = data.frame(polymer = unique(mean_polymers_blood$polymer)),
                aes(x = polymer, xend = polymer, y = -8, yend = 30),
                color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
@@ -1421,7 +1671,7 @@ mean_polymers_control <- aggregate(count ~ polymer,
 G <- 
   ggplot(mean_polymers_control,
          aes(x = polymer, y = count)) +
-  ggtitle("G") +
+  ggtitle("g") +
   geom_segment(data = data.frame(polymer = unique(mean_polymers_control$polymer)),
                aes(x = polymer, xend = polymer, y = -8, yend = 30),
                color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
@@ -1482,4 +1732,41 @@ ggsave(FIG,
        width = 4.75, height = 1.8*4, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_8.png")
+       file="figures/supplementary/extended_data_figure_7.png")
+
+#---------
+#Save the underlying data
+#---------
+write.csv(na.omit(control[,c("sample","length")]),
+          file = "data/figures/figure_s7a.csv",
+          row.names = F)
+
+write.csv(na.omit(control[,c("sample","width")]),
+          file = "data/figures/figure_s7b.csv",
+          row.names = F)
+
+write.csv(rbind(data.frame(source = "blood",
+                           length = sizes$Length),
+                data.frame(source = "control",
+                           length = control$length)),
+          file = "data/figures/figure_s7c.csv",
+          row.names = F)
+
+write.csv(rbind(data.frame(source = "blood",
+                           width = sizes$Width),
+                data.frame(source = "control",
+                           width = control$width)),
+          file = "data/figures/figure_s7d.csv",
+          row.names = F)
+
+write.csv(control_polymers,
+            file = "data/figures/figure_s7e.csv",
+            row.names = F)
+
+write.csv(mean_polymers_blood,
+          file = "data/figures/figure_s7f.csv",
+          row.names = F)
+
+write.csv(mean_polymers_control,
+          file = "data/figures/figure_s7g.csv",
+          row.names = F)

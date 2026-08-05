@@ -72,6 +72,8 @@ summary(fit)
 #Generate the pairwise combinations of species excluding giant armadillos
 all_pairs <- combn(unique(mp_data[mp_data$species != "Priodontes_maximus","species"]), 2, simplify = F)
 
+mp_data$biome <- as.factor(mp_data$biome)
+
 #Run the analyses
 results <- list()
 for(i in 1:length(all_pairs)){
@@ -83,11 +85,11 @@ for(i in 1:length(all_pairs)){
   res <- list()
   
   #Loop over the vector of polymer names
-  for(j in 1:length(polymer_names)){
+  for(j in 1:length(polymers)){
     
     
     #Fit the GLM for the jth polymer
-    fit <- gam(formula(paste(polymer_names[j]," ~ species")),
+    fit <- gam(formula(paste(polymers[j]," ~ species + s(biome, bs = 're')")),
                family = tw(link = "log"),
                data = data_sub,
                method = "REML")
@@ -96,7 +98,7 @@ for(i in 1:length(all_pairs)){
     res[[j]] <- data.frame(pair = paste(all_pairs[[i]][1], all_pairs[[i]][2]),
                            species1 = all_pairs[[i]][1],
                            species2 = all_pairs[[i]][2],
-                           polymer = polymer_names[j],
+                           polymer = polymers[j],
                            coef_spp = sub("species","",names(summary(fit)$p.coeff[2])),
                            beta = unname(summary(fit)$p.coeff[2]),
                            t = unname(summary(fit)$p.t[2]),

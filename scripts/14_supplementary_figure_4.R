@@ -1,4 +1,4 @@
-# This script generates supplementary figure 5 that
+# This script generates supplementary figure 4 that
 # visualises differences in polymer concentrations between the three study regions
 # Note: the individual panels are generated in this script
 # but additional labeling was done outside of R
@@ -14,7 +14,7 @@ source("scripts/04_microplastics_data_import.R")
 
 
 #---------------------------------------------------------------------
-# Figure S5A - heatmap of polymer abundances
+# Figure S4A - heatmap of polymer abundances
 #---------------------------------------------------------------------
 
 
@@ -26,7 +26,7 @@ mp_data_long$sample <- factor(mp_data_long$sample, levels = ORDER, ordered = TRU
 # Heatmap of the polymer abundances
 A <- 
   ggplot(mp_data_long, aes(polymer, sample, fill= log(concentration+1))) + 
-  ggtitle("A") +
+  ggtitle("a") +
   geom_tile(alpha = 0.95) +
   scico::scale_fill_scico(palette = "lipari",
                           name = "Particles/mL",
@@ -48,7 +48,7 @@ A <-
                                     hjust = 1, vjust = 0.5),
         axis.ticks.y = element_blank(),
         axis.ticks.x = element_blank(),
-        plot.title = element_text(hjust = -0.05, size = 6, family = "sans", face = "bold"),
+        plot.title = element_text(hjust = 0, size = 6, family = "sans", face = "bold"),
         legend.position = "top",
         legend.title = element_text(size=5, family = "sans", face = "bold", vjust = -2, hjust = 0.5),
         legend.text = element_text(size=4, family = "sans", face = "bold", vjust = 4),
@@ -76,7 +76,7 @@ mean_polymers <- aggregate(concentration ~ biome + polymer,
 B <- 
   ggplot(mean_polymers[mean_polymers$biome == "Amazon",],
          aes(x = polymer, y = concentration)) +
-  ggtitle("B") +
+  ggtitle("b") +
   geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
                aes(x = polymer, xend = polymer, y = -8, yend = 30),
                color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
@@ -113,7 +113,7 @@ B <-
 C <- 
   ggplot(mean_polymers[mean_polymers$biome == "Cerrado",],
          aes(x = polymer, y = concentration)) +
-  ggtitle("C") +
+  ggtitle("c") +
   geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
                aes(x = polymer, xend = polymer, y = -8, yend = 30),
                color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
@@ -149,7 +149,7 @@ C <-
 D <- 
   ggplot(mean_polymers[mean_polymers$biome == "Pantanal",],
          aes(x = polymer, y = concentration)) +
-  ggtitle("D") +
+  ggtitle("d") +
   geom_segment(data = data.frame(polymer = unique(mean_polymers$polymer)),
                aes(x = polymer, xend = polymer, y = -8, yend = 30),
                color = "grey85", linewidth = 0.2, inherit.aes = FALSE) +
@@ -200,4 +200,24 @@ ggsave(FIG,
        width = 2.375*2, height = 5, units = "in",
        dpi = 600,
        bg = "transparent",
-       file="figures/supplementary/extended_data_figure_5.png")
+       file="figures/supplementary/extended_data_figure_4.png")
+
+
+#---------
+#Save the underlying data
+#---------
+write.csv(mp_data_long,
+          file = "data/figures/figure_s4a.csv",
+          row.names = F)
+
+write.csv(mean_polymers[mean_polymers$biome == "Amazon",],
+          file = "data/figures/figure_s4b.csv",
+          row.names = F)
+
+write.csv(mean_polymers[mean_polymers$biome == "Cerrado",],
+          file = "data/figures/figure_s4c.csv",
+          row.names = F)
+
+write.csv(mean_polymers[mean_polymers$biome == "Pantanal",],
+          file = "data/figures/figure_s4d.csv",
+          row.names = F)

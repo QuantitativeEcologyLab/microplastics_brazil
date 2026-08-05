@@ -95,13 +95,13 @@ ggsave(a,
 
 
 #-------------------------------------------------------------
-# Figure 2B - Correlation with maximum human footprint index
+# Figure 2b - Correlation with maximum human footprint index
 #-------------------------------------------------------------
 
 
 b <- 
   ggplot(data = mp_data, aes(x = max_HFI, y = mp_ml)) +
-  ggtitle("B") +
+  ggtitle("b") +
   geom_smooth(method = "gam",
               formula = y ~ x,
               method.args = list(family = tw(link = "log")),
@@ -130,12 +130,12 @@ b <-
   coord_cartesian(ylim = c(5,170))
 
 #-------------------------------------------------------------
-# Figure 2C - Correlation with distance to development
+# Figure 2c - Correlation with distance to development
 #-------------------------------------------------------------
 
 c <- 
   ggplot(data = mp_data, aes(x = mean_dist_development, y = mp_ml)) +
-  ggtitle("C") +
+  ggtitle("c") +
   geom_smooth(method = "gam", formula = y ~ x, method.args = list(family = tw(link = "log")), col = "black", fill = "grey80", linewidth = 0.2, linetype = "solid") +
   geom_point(aes(col = species),size = 0.4) +
   scale_colour_manual(values = c("#619b8a", "#005f73"), name = "") +
@@ -187,3 +187,12 @@ ggsave(FIG,
        bg = "transparent",
        file="figures/main_text_panels/figure_2bc.png")
 
+
+#Save the underlying data
+write.csv(na.omit(mp_data[,c("species","mp_ml","max_HFI")]),
+          file = "data/figures/figure_2b.csv",
+          row.names = F)
+
+write.csv(na.omit(mp_data[,c("species","mp_ml","mean_dist_development")]),
+          file = "data/figures/figure_2c.csv",
+          row.names = F)

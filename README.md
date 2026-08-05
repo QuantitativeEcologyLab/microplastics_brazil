@@ -1,6 +1,6 @@
 # Microplastics in Terrestrial Mammals
 
-This repository contains the data and scripts required to reproduce all analyses and figures in the paper "Human disturbance drives microplastic abundance in terrestrial wildlife" by Ferraz et al.
+This repository contains the data and scripts required to reproduce all analyses and figures in the paper "Human land use drives microplastic abundance in terrestrial wildlife" by Ferraz et al.
 
 ## Dependencies
 
@@ -42,6 +42,9 @@ data/
         armadillo_movement_summary.csv                # Armadillo movement and home range statistics
         tapir_land_use_summary.csv                    # Land use within tapir home ranges
         tapir_movement_summary.csv                    # Tapir movement and home range statistics
+    figures/                                          
+        figure_1b.csv                                 # Data files underlying all individual figure panels
+        ...
 
 results/
     anteater_movement/
@@ -124,14 +127,14 @@ Scripts should be run in the following order. Scripts 05 onward require scripts 
 | `10_sensitivity_analyses.R` | Sensitivity analyses including species-specific models and influential point diagnostics |
 | `11_figure_1.R` | Generates Figure 1 |
 | `12_figure_2.R` | Generates Figure 2 |
-| `13_supplementary_figures.R` | Generates supplementary figures 1-3, 6, and 8 |
-| `14_supplementary_figure_5.R` | Generates supplementary figure 5 |
+| `13_supplementary_figures.R` | Generates supplementary figures 1-3, 5, and 7 |
+| `14_supplementary_figure_4.R` | Generates supplementary figure 4 |
 
 No non-standard hardware is required. All scripts were developed and tested on macOS using R version 4.3.3. Note that the movement modelling scripts (01_1 through 01_3) are computationally intensive and may take several hours to run on a standard desktop computer; all model outputs are provided in the results folder so these scripts do not need to be rerun to reproduce the manuscript analyses and figures.
 
 ## Citation
 
-Ferraz et al. (in revision). Human disturbance drives microplastic abundance in terrestrial wildlife.
+Ferraz et al. (in revision). Human land use drives microplastic abundance in terrestrial wildlife.
 
 ## License
 
